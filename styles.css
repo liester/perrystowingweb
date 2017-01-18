@@ -13,6 +13,9 @@ table + table { margin-top: 5em; }
     margin: auto;
 }
 
+/* Maps must have a height. I think it must be static as well */
+#stateMap { height: 800px; }
+
 /* The Modal (background) */
 .modal {
     display: none; /* Hidden by default */
