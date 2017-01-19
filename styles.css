@@ -6,7 +6,7 @@ table thead {
     font-weight: bold;
 }
 
-table + table { margin-top: 5em; }
+#table_content { margin-top: 5em; }
 
 #main_content {
     width: 90%;
@@ -52,4 +52,17 @@ table + table { margin-top: 5em; }
     color: black;
     text-decoration: none;
     cursor: pointer;
+}
+
+#table_content {
+  border-radius: 7px;
+  border: 2px solid black;
+}
+
+#table_heading {
+    margin: 1em;
+}
+
+.table_content_header {
+    font-size: 2em;
 }

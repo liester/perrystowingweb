@@ -43,46 +43,91 @@ let callService = {
     }
 }
 
-let truckService = {
-    getBuildTrucks: function () {
-        let url = "http://localhost:8080/trucks";
-        let xhr = createCORSRequest('GET', url, () => {
-            let response = JSON.parse(xhr.responseText);
-            response.forEach((truck, index) => {
-                //create <tr>
-                let trElement = document.createElement('tr');
-                //create <td> elements
-                let tdElement = document.createElement('td');
-                tdElement.innerText = index + 1;
-                trElement.appendChild(tdElement);
 
-                tdElement = document.createElement('td');
-                tdElement.innerText = truck['truckId'];
-                trElement.appendChild(tdElement);
 
-                tdElement = document.createElement('td');
-                tdElement.innerText = truck['driverFirstName'] + ' ' + truck['driverLastName'];
-                trElement.appendChild(tdElement);
 
-                tdElement = document.createElement('td');
-                tdElement.innerText = 'MB Status';
-                trElement.appendChild(tdElement);
+function buildTruckTable(trucks) {
+    makeRequest('GET', "http://localhost:8080/trucks").then((response) => {
+        let trucks = JSON.parse(response);
 
-                tdElement = document.createElement('td');
-                let assignButton = document.createElement('input');
-                assignButton.type = 'button';
-                assignButton.value = 'Assign Call';
-                tdElement.appendChild(assignButton);
-                trElement.appendChild(tdElement);
-                document.querySelector("#truck_table tbody").appendChild(trElement);
-            });
+        trucks.forEach((truck, index) => {
+            //create <tr>
+            let trElement = document.createElement('tr');
+            //create <td> elements
+            let tdElement = document.createElement('td');
+            tdElement.innerText = index + 1;
+            trElement.appendChild(tdElement);
+
+            tdElement = document.createElement('td');
+            tdElement.innerText = truck['truckId'];
+            trElement.appendChild(tdElement);
+
+            tdElement = document.createElement('td');
+            tdElement.innerText = truck['driverFirstName'] + ' ' + truck['driverLastName'];
+            trElement.appendChild(tdElement);
+
+            tdElement = document.createElement('td');
+            tdElement.innerText = 'MB Status';
+            trElement.appendChild(tdElement);
+
+            tdElement = document.createElement('td');
+            let assignButton = document.createElement('input');
+            assignButton.type = 'button';
+            assignButton.value = 'Assign Call';
+            assignButton.classList.add('btn', 'btn-primary');
+            tdElement.appendChild(assignButton);
+            trElement.appendChild(tdElement);
+            document.querySelector("#truck_table tbody").appendChild(trElement);
         });
-
-        xhr.send();
-    }
+    });
 }
 
+function buildCallsTable(trucks) {
+    makeRequest('GET', "http://localhost:8080/calls").then((response) => {
+        let calls = JSON.parse(response);
+        console.log(calls);
+        calls.forEach((call, index) => {
+            //create <tr>
+            let trElement = document.createElement('tr');
+            //create <td> elements
+            let tdElement = document.createElement('td');
+            tdElement.innerText = index + 1;
+            trElement.appendChild(tdElement);
 
+            tdElement = document.createElement('td');
+            tdElement.innerText = call['id'];
+            trElement.appendChild(tdElement);
+
+            tdElement = document.createElement('td');
+            tdElement.innerText = call.customer['firstName'] + ' ' + call.customer['lastName'];
+            trElement.appendChild(tdElement);
+
+            tdElement = document.createElement('td');
+            tdElement.innerText = call['dropOffLocation'];
+            trElement.appendChild(tdElement);
+
+            tdElement = document.createElement('td');
+            tdElement.innerText = call['pickUpLocation'];
+            trElement.appendChild(tdElement);
+
+            tdElement = document.createElement('td');
+            tdElement.innerText = call['truckId']
+            trElement.appendChild(tdElement);
+
+            tdElement = document.createElement('td');
+            let assignButton = document.createElement('button');
+            assignButton.type = 'button';
+            assignButton.innerText = 'Assign Truck';
+            assignButton.classList.add('btn', 'btn-primary');
+            assignButton.addEventListener('click', () => {
+                alert("Joe Sucks");
+            });
+            tdElement.appendChild(assignButton);
+            trElement.appendChild(tdElement);
+            document.querySelector("#call_table tbody").appendChild(trElement);
+        });
+    });
+}
 
 
 function initStateMap() {
@@ -114,23 +159,33 @@ function addTruckToMap(map, truckNumber, status, location) {
         .bindPopup('Truck: ' + truckNumber + '<br>Status: ' + status);
 }
 
-
-let createCORSRequest = function (method, url, successCallback) {
-    var xhr = new XMLHttpRequest();
-    if ("withCredentials" in xhr) {
-        xhr.open(method, url, true);
-    } else if (typeof XDomainRequest != "undefined") {
-        xhr = new XDomainRequest();
+function makeRequest(method, url) {
+    return new Promise(function (resolve, reject) {
+        var xhr = new XMLHttpRequest();
         xhr.open(method, url);
-    } else {
-        xhr = null;
-    }
-    xhr.onload = successCallback;
-    return xhr;
+        xhr.onload = function () {
+            if (this.status >= 200 && this.status < 300) {
+                resolve(xhr.response);
+            } else {
+                reject({
+                    status: this.status,
+                    statusText: xhr.statusText
+                });
+            }
+        };
+        xhr.onerror = function () {
+            reject({
+                status: this.status,
+                statusText: xhr.statusText
+            });
+        };
+        xhr.send();
+    });
 }
 
 let initializePage = () => {
-    truckService.getBuildTrucks();
+    buildTruckTable();
+    buildCallsTable();
 }
 
 initializePage();
