@@ -10,11 +10,14 @@ var span = document.getElementsByClassName("close")[0];
 var stateMap = initStateMap();
 
 
+
+
+
 // When the user clicks on the button, open the modal
 console.log(btn);
-// btn.onclick = function () {
-// modal.style.display = "block";
-// }
+btn.onclick = function () {
+    modal.style.display = "block";
+}
 
 // When the user clicks on <span> (x), close the modal
 span.onclick = function () {
@@ -40,32 +43,75 @@ let callService = {
     }
 }
 
+let truckService = {
+    getBuildTrucks: function () {
+        let url = "http://localhost:8080/trucks";
+        let xhr = createCORSRequest('GET', url, () => {
+            let response = JSON.parse(xhr.responseText);
+            response.forEach((truck, index) => {
+                //create <tr>
+                let trElement = document.createElement('tr');
+                //create <td> elements
+                let tdElement = document.createElement('td');
+                tdElement.innerText = index + 1;
+                trElement.appendChild(tdElement);
+
+                tdElement = document.createElement('td');
+                tdElement.innerText = truck['truckId'];
+                trElement.appendChild(tdElement);
+
+                tdElement = document.createElement('td');
+                tdElement.innerText = truck['driverFirstName'] + ' ' + truck['driverLastName'];
+                trElement.appendChild(tdElement);
+
+                tdElement = document.createElement('td');
+                tdElement.innerText = 'MB Status';
+                trElement.appendChild(tdElement);
+
+                tdElement = document.createElement('td');
+                let assignButton = document.createElement('input');
+                assignButton.type = 'button';
+                assignButton.value = 'Assign Call';
+                tdElement.appendChild(assignButton);
+                trElement.appendChild(tdElement);
+                document.querySelector("#truck_table tbody").appendChild(trElement);
+            });
+        });
+
+        xhr.send();
+    }
+}
+
+
+
+
 function initStateMap() {
-	var stateMap = L.map('stateMap').setView([41.587972289460076, -93.6332130432129], 12);
-	L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-	    attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-	}).addTo(stateMap);
-	
-	addTruckToMap(stateMap, 1, 'READY', [41.624424, -93.744167]);
-	addTruckToMap(stateMap, 2, 'TRAVEL', [41.549948, -93.620258]);
-	
-	return stateMap;
+    var stateMap = L.map('stateMap').setView([41.587972289460076, -93.6332130432129], 12);
+    L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(stateMap);
+
+    addTruckToMap(stateMap, 1, 'READY', [41.624424, -93.744167]);
+    addTruckToMap(stateMap, 2, 'TRAVEL', [41.549948, -93.620258]);
+
+    return stateMap;
 }
 
 function addTruckToMap(map, truckNumber, status, location) {
-	var icon;
-	if(status == 'READY')
-		icon = greenIcon;
-	else if(status == 'TRAVEL')
-		icon = redIcon;
-	else if(status == 'UNLOAD')
-		icon = blueIcon;
-	L.marker(location,
-		{icon: icon,
-		keyboard: false,
-		title: status
-		}).addTo(map)
-		.bindPopup('Truck: '+truckNumber+'<br>Status: '+status); 
+    var icon;
+    if (status == 'READY')
+        icon = greenIcon;
+    else if (status == 'TRAVEL')
+        icon = redIcon;
+    else if (status == 'UNLOAD')
+        icon = blueIcon;
+    L.marker(location,
+        {
+            icon: icon,
+            keyboard: false,
+            title: status
+        }).addTo(map)
+        .bindPopup('Truck: ' + truckNumber + '<br>Status: ' + status);
 }
 
 
@@ -82,3 +128,9 @@ let createCORSRequest = function (method, url, successCallback) {
     xhr.onload = successCallback;
     return xhr;
 }
+
+let initializePage = () => {
+    truckService.getBuildTrucks();
+}
+
+initializePage();
