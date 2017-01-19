@@ -1,39 +1,14 @@
-// Get the modal
-var modal = document.getElementById('myModal');
-
-// Get the button that opens the modal
-var btn = document.getElementById("myBtn");
-
-// Get the <span> element that closes the modal
-var span = document.getElementsByClassName("close")[0];
-
 var stateMap = initStateMap();
 
 
-
-
-
-// When the user clicks on the button, open the modal
-console.log(btn);
-btn.onclick = function () {
-    modal.style.display = "block";
-}
-
-// When the user clicks on <span> (x), close the modal
-span.onclick = function () {
-    modal.style.display = "none";
-}
-
-// When the user clicks anywhere outside of the modal, close it
-window.onclick = function (event) {
-    if (event.target == modal) {
-        modal.style.display = "none";
-    }
+var domain = 'https://perrystowingserver.herokuapp.com';
+if (location.hostname == 'localhost' || location.hostname == '127.0.0.1'){
+    domain = "http://localhost:8080"
 }
 
 let callService = {
     getCallById: function (callId) {
-        let url = "http://localhost:8080/calls/2";
+        let url = "/calls/2";
         let xhr = createCORSRequest('GET', url, () => {
             let response = xhr.responseText;
             console.log(response);
@@ -47,7 +22,7 @@ let callService = {
 
 
 function buildTruckTable(trucks) {
-    makeRequest('GET', "http://localhost:8080/trucks").then((response) => {
+    makeRequest('GET', "/trucks").then((response) => {
         let trucks = JSON.parse(response);
 
         trucks.forEach((truck, index) => {
@@ -83,7 +58,7 @@ function buildTruckTable(trucks) {
 }
 
 function buildCallsTable(trucks) {
-    makeRequest('GET', "http://localhost:8080/calls").then((response) => {
+    makeRequest('GET', "/calls").then((response) => {
         let calls = JSON.parse(response);
         console.log(calls);
         calls.forEach((call, index) => {
@@ -162,6 +137,7 @@ function addTruckToMap(map, truckNumber, status, location) {
 function makeRequest(method, url) {
     return new Promise(function (resolve, reject) {
         var xhr = new XMLHttpRequest();
+        url = domain + url;
         xhr.open(method, url);
         xhr.onload = function () {
             if (this.status >= 200 && this.status < 300) {
