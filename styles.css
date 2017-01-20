@@ -6,7 +6,7 @@ table thead {
     font-weight: bold;
 }
 
-#table_content { margin-top: 5em; }
+.table_content { margin-top: 5em; }
 
 #main_content {
     width: 90%;
@@ -17,7 +17,21 @@ table thead {
 #stateMap { height: 800px; }
 
 /* The Modal (background) */
-.modal {
+#assign_truck_modal {
+    display: none;
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+#assign_call_modal {
+    display: none;
     position: fixed; /* Stay in place */
     z-index: 1; /* Sit on top */
     left: 0;
@@ -35,7 +49,8 @@ table thead {
     margin: 15% auto; /* 15% from the top and centered */
     padding: 20px;
     border: 1px solid #888;
-    width: 80%; /* Could be more or less, depending on screen size */
+    width: 50%;  /*Could be more or less, depending on screen size  */
+    text-align: center;
 }
 
 /* The Close Button */
@@ -53,15 +68,19 @@ table thead {
     cursor: pointer;
 }
 
-#table_content {
+.table_content {
   border-radius: 7px;
   border: 2px solid black;
 }
 
-#table_heading {
+.table_heading {
     margin: 1em;
 }
 
 .table_content_header {
     font-size: 2em;
+}
+
+.assign_buttons {
+   margin-top: 1em;
 }

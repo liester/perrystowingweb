@@ -1,8 +1,23 @@
 var stateMap = initStateMap();
 
 
+window.onclick = function (event) {
+    let assign_truck_modal = document.getElementById('assign_truck_modal');
+    let assign_call_modal = document.getElementById('assign_call_modal');
+    if (event.target == assign_truck_modal) {
+        assign_truck_modal.style.display = "none";
+    } else if (event.target == assign_call_modal) {
+        assign_call_modal.style.display = "none";
+    }
+}
+
+function closeModal(modalId) {
+    let assign_modal = document.getElementById(modalId);
+    assign_modal.style.display = "none";
+}
+
 var domain = 'https://perrystowingserver.herokuapp.com';
-if (location.hostname == 'localhost' || location.hostname == '127.0.0.1'){
+if (location.hostname == 'localhost' || location.hostname == '127.0.0.1') {
     domain = "http://localhost:8080"
 }
 
@@ -18,7 +33,12 @@ let callService = {
     }
 }
 
-
+function assignTruck() {
+    let selector = document.getElementById('truck_selector');
+    let truckId = selector.options[selector.selectedIndex].value;
+    document.getElementById('assign_truck_modal').style.display = "none";
+    // makeRequest('POST', "/calls/assignTruck/" + truckId).then(() => {});
+}
 
 
 function buildTruckTable(trucks) {
@@ -50,10 +70,32 @@ function buildTruckTable(trucks) {
             assignButton.type = 'button';
             assignButton.value = 'Assign Call';
             assignButton.classList.add('btn', 'btn-primary');
+            assignButton.addEventListener('click', () => {
+                openCallModal();
+            });
+
             tdElement.appendChild(assignButton);
             trElement.appendChild(tdElement);
             document.querySelector("#truck_table tbody").appendChild(trElement);
         });
+    });
+}
+
+function openCallModal() {
+    makeRequest('GET', '/calls').then((calls) => {
+        calls = JSON.parse(calls);
+        let create_call_modal = document.getElementById('assign_call_modal');
+        create_call_modal.style.display = "block";
+        let call_selector = document.getElementById('call_selector');
+        call_selector.options.length = 0;
+        calls.forEach((call) => {
+            let option = document.createElement("option");
+            option.value = call['id'];
+            option.innerText = call['id'] + ": " + call.customer['firstName'] + " " + call.customer['lastName'];
+            call_selector.appendChild(option);
+        });
+
+        console.log(calls);
     });
 }
 
@@ -95,7 +137,7 @@ function buildCallsTable(trucks) {
             assignButton.innerText = 'Assign Truck';
             assignButton.classList.add('btn', 'btn-primary');
             assignButton.addEventListener('click', () => {
-                alert("Joe Sucks");
+                openTruckModal();
             });
             tdElement.appendChild(assignButton);
             trElement.appendChild(tdElement);
@@ -104,6 +146,22 @@ function buildCallsTable(trucks) {
     });
 }
 
+function openTruckModal() {
+    makeRequest('GET', '/trucks').then((trucks) => {
+        trucks = JSON.parse(trucks);
+        let truck_modal = document.getElementById('assign_truck_modal');
+        truck_modal.style.display = "block";
+        let truck_selector = document.getElementById('truck_selector');
+        truck_selector.options.length = 0;
+        trucks.forEach((truck) => {
+            let option = document.createElement("option");
+            option.value = truck["truckId"];
+            option.innerText = truck["truckId"] + ": " + truck['driverFirstName'] + " " + truck['driverLastName'];
+            truck_selector.appendChild(option);
+        });
+        console.log(trucks);
+    });
+}
 
 function initStateMap() {
     var stateMap = L.map('stateMap').setView([41.587972289460076, -93.6332130432129], 12);
@@ -125,8 +183,7 @@ function addTruckToMap(map, truckNumber, status, location) {
         icon = redIcon;
     else if (status == 'UNLOAD')
         icon = blueIcon;
-    L.marker(location,
-        {
+    L.marker(location, {
             icon: icon,
             keyboard: false,
             title: status
