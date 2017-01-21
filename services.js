@@ -12,8 +12,8 @@ window.onclick = function (event) {
 }
 
 function closeModal(modalId) {
-    let assign_modal = document.getElementById(modalId);
-    assign_modal.style.display = "none";
+    let modal = document.getElementById(modalId);
+    modal.style.display = "none";
 }
 
 var domain = 'https://perrystowingserver.herokuapp.com';
@@ -21,27 +21,37 @@ if (location.hostname == 'localhost' || location.hostname == '127.0.0.1') {
     domain = "http://localhost:8080"
 }
 
-let callService = {
-    getCallById: function (callId) {
-        let url = "/calls/2";
-        let xhr = createCORSRequest('GET', url, () => {
-            let response = xhr.responseText;
-            console.log(response);
-        });
-
-        xhr.send();
-    }
-}
-
-function assignTruck() {
+function assignTruck(clicker) {
     let selector = document.getElementById('truck_selector');
     let truckId = selector.options[selector.selectedIndex].value;
-    document.getElementById('assign_truck_modal').style.display = "none";
-    // makeRequest('POST', "/calls/assignTruck/" + truckId).then(() => {});
+    let callId = document.getElementById('assign_truck_submit').dataset.callid;
+    let assign_truck_modal = document.getElementById('assign_truck_modal');
+    makeRequest('POST', "/calls/assign/" + callId + "/" + truckId).then(() => {
+        closeModal(assign_truck_modal.id);
+    });
 }
 
 
-function buildTruckTable(trucks) {
+function unAssignTruck(clicker) {
+    let callId = document.getElementById('assign_truck_submit').dataset.callid;
+    let assign_truck_modal = document.getElementById('assign_truck_modal');
+    makeRequest('POST', "/calls/unassign/" + callId).then(() => {
+        closeModal(assign_truck_modal.id);
+    });
+}
+
+function assignCall(clicker) {
+    let selector = document.getElementById('call_selector');
+    let callId = selector.options[selector.selectedIndex].value;
+    let truckId = document.getElementById('assign_call_submit').dataset.truckid;
+    let assign_call_modal = document.getElementById('assign_call_modal');
+    makeRequest('POST', "/calls/assign/" + callId + "/" + truckId).then(() => {
+        closeModal(assign_call_modal.id);
+    });
+}
+
+
+function buildTruckTable() {
     makeRequest('GET', "/trucks").then((response) => {
         let trucks = JSON.parse(response);
 
@@ -54,7 +64,7 @@ function buildTruckTable(trucks) {
             trElement.appendChild(tdElement);
 
             tdElement = document.createElement('td');
-            tdElement.innerText = truck['truckId'];
+            tdElement.innerText = truck['identifier'];
             trElement.appendChild(tdElement);
 
             tdElement = document.createElement('td');
@@ -66,13 +76,19 @@ function buildTruckTable(trucks) {
             trElement.appendChild(tdElement);
 
             tdElement = document.createElement('td');
+            tdElement.innerText = truck['numberOfCalls'];
+            trElement.appendChild(tdElement);
+
+            tdElement = document.createElement('td');
             let assignButton = document.createElement('input');
             assignButton.type = 'button';
             assignButton.value = 'Assign Call';
             assignButton.classList.add('btn', 'btn-primary');
             assignButton.addEventListener('click', () => {
-                openCallModal();
+                openAssignCallModal(truck['id']);
             });
+            assignButton.id = "assign_call_button_" + index;
+            assignButton.style.cursor = "pointer";
 
             tdElement.appendChild(assignButton);
             trElement.appendChild(tdElement);
@@ -81,11 +97,11 @@ function buildTruckTable(trucks) {
     });
 }
 
-function openCallModal() {
-    makeRequest('GET', '/calls').then((calls) => {
+function openAssignCallModal(truckId) {
+    makeRequest('GET', '/calls/available').then((calls) => {
         calls = JSON.parse(calls);
-        let create_call_modal = document.getElementById('assign_call_modal');
-        create_call_modal.style.display = "block";
+        let assign_call_modal = document.getElementById('assign_call_modal');
+        assign_call_modal.style.display = "block";
         let call_selector = document.getElementById('call_selector');
         call_selector.options.length = 0;
         calls.forEach((call) => {
@@ -94,12 +110,12 @@ function openCallModal() {
             option.innerText = call['id'] + ": " + call.customer['firstName'] + " " + call.customer['lastName'];
             call_selector.appendChild(option);
         });
-
-        console.log(calls);
+        let assign_call_submit = document.getElementById("assign_call_submit")
+        assign_call_submit.dataset.truckid = truckId;
     });
 }
 
-function buildCallsTable(trucks) {
+function buildCallsTable() {
     makeRequest('GET', "/calls").then((response) => {
         let calls = JSON.parse(response);
         console.log(calls);
@@ -120,15 +136,15 @@ function buildCallsTable(trucks) {
             trElement.appendChild(tdElement);
 
             tdElement = document.createElement('td');
-            tdElement.innerText = call['dropOffLocation'];
-            trElement.appendChild(tdElement);
-
-            tdElement = document.createElement('td');
             tdElement.innerText = call['pickUpLocation'];
             trElement.appendChild(tdElement);
 
             tdElement = document.createElement('td');
-            tdElement.innerText = call['truckId']
+            tdElement.innerText = call['dropOffLocation'];
+            trElement.appendChild(tdElement);
+
+            tdElement = document.createElement('td');
+            tdElement.innerText = call['truckId'];
             trElement.appendChild(tdElement);
 
             tdElement = document.createElement('td');
@@ -136,9 +152,17 @@ function buildCallsTable(trucks) {
             assignButton.type = 'button';
             assignButton.innerText = 'Assign Truck';
             assignButton.classList.add('btn', 'btn-primary');
+            if (call['truckId'] != 0) {
+                assignButton.classList.remove('btn-primary');
+                assignButton.classList.add('btn-warning');
+                assignButton.innerText = 'Re-Assign';
+            }
             assignButton.addEventListener('click', () => {
-                openTruckModal();
+                openAssignTruckModal(call['id']);
             });
+            assignButton.id = "assign_truck_button_" + index;
+            assignButton.style.cursor = "pointer";
+
             tdElement.appendChild(assignButton);
             trElement.appendChild(tdElement);
             document.querySelector("#call_table tbody").appendChild(trElement);
@@ -146,7 +170,7 @@ function buildCallsTable(trucks) {
     });
 }
 
-function openTruckModal() {
+function openAssignTruckModal(callId) {
     makeRequest('GET', '/trucks').then((trucks) => {
         trucks = JSON.parse(trucks);
         let truck_modal = document.getElementById('assign_truck_modal');
@@ -155,11 +179,12 @@ function openTruckModal() {
         truck_selector.options.length = 0;
         trucks.forEach((truck) => {
             let option = document.createElement("option");
-            option.value = truck["truckId"];
-            option.innerText = truck["truckId"] + ": " + truck['driverFirstName'] + " " + truck['driverLastName'];
+            option.value = truck["id"];
+            option.innerText = truck["identifier"] + ": " + truck['driverFirstName'] + " " + truck['driverLastName'];
             truck_selector.appendChild(option);
         });
-        console.log(trucks);
+        let assign_truck_submit = document.getElementById("assign_truck_submit")
+        assign_truck_submit.dataset.callid = callId;
     });
 }
 

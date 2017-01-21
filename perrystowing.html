@@ -28,6 +28,7 @@
                         <td>Truck Id</td>
                         <td>Driver</td>
                         <td>Status</td>
+                        <td># of Calls</td>
                         <td>Action</td>
                     </tr>
                 </thead>
@@ -72,8 +73,13 @@
                 </select>
             </div>
             <div class="assign_buttons">
-                <button type="button" class="btn btn-danger" onclick="closeModal('assign_truck_modal')">Cancel</button><button
-                    type="button" class="btn btn-success" onclick="assignTruck()">Assign</button>
+                <div style="margin-bottom: 1em">
+                    <button type="button" class="btn btn-warning" onclick="unAssignTruck(this)">Un-Assign</button>
+                    <button id="assign_truck_submit" data-callid="" type="button" class="btn btn-success" onclick="assignTruck(this)">Assign</button>
+                </div>
+                <div>
+                    <button type="button" class="btn btn-danger" onclick="closeModal('assign_truck_modal')">Cancel</button>
+                </div>
             </div>
         </div>
     </div>
@@ -88,8 +94,8 @@
                 </select>
             </div>
             <div class="assign_buttons">
-                <button type="button" class="btn btn-danger" onclick="closeModal('assign_call_modal')">Cancel</button><button
-                    type="button" class="btn btn-success" onclick="assignCall()">Assign</button>
+                <button type="button" class="btn btn-danger" onclick="closeModal('assign_call_modal')">Cancel</button>
+                <button id="assign_call_submit" data-truckid="" type="button" class="btn btn-success" onclick="assignCall(this)">Assign</button>
             </div>
         </div>
     </div>
