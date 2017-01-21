@@ -54,7 +54,7 @@ function assignCall(clicker) {
 function buildTruckTable() {
     makeRequest('GET', "/trucks").then((response) => {
         let trucks = JSON.parse(response);
-
+        let truck_table_tbody = document.querySelector("#truck_table tbody");
         trucks.forEach((truck, index) => {
             //create <tr>
             let trElement = document.createElement('tr');
@@ -92,7 +92,7 @@ function buildTruckTable() {
 
             tdElement.appendChild(assignButton);
             trElement.appendChild(tdElement);
-            document.querySelector("#truck_table tbody").appendChild(trElement);
+            truck_table_tbody.appendChild(trElement);
         });
     });
 }
@@ -118,7 +118,7 @@ function openAssignCallModal(truckId) {
 function buildCallsTable() {
     makeRequest('GET', "/calls").then((response) => {
         let calls = JSON.parse(response);
-        console.log(calls);
+        let call_table_tbody = document.querySelector("#call_table tbody");
         calls.forEach((call, index) => {
             //create <tr>
             let trElement = document.createElement('tr');
@@ -165,7 +165,7 @@ function buildCallsTable() {
 
             tdElement.appendChild(assignButton);
             trElement.appendChild(tdElement);
-            document.querySelector("#call_table tbody").appendChild(trElement);
+            call_table_tbody.appendChild(trElement);
         });
     });
 }
