@@ -14,7 +14,10 @@ table thead {
 }
 
 /* Maps must have a height. I think it must be static as well */
-#stateMap { height: 800px; }
+#stateMap { 
+    height: 800px;
+    width: 85%;
+}
 
 /* The Modal (background) */
 #assign_truck_modal {

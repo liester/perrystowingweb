@@ -1,6 +1,3 @@
-var stateMap = initStateMap();
-
-
 window.onclick = function (event) {
     let assign_truck_modal = document.getElementById('assign_truck_modal');
     let assign_call_modal = document.getElementById('assign_call_modal');
@@ -70,6 +67,12 @@ function buildTruckTable() {
 
 
         trucks.forEach((truck, index) => {
+            // addTruckToMap(map, truckNumber, status, location)
+            addTruckToMap(stateMap,
+                truck.identifier,
+                truck.truckStatusType, 
+                [parseFloat(truck.gisLatitude, 10), parseFloat(truck.gisLongitude, 10)]);
+
             //create <tr>
             let trElement = document.createElement('tr');
             trElement.id = "truck_row_" + (index + 1);
@@ -211,13 +214,18 @@ function openAssignTruckModal(callId) {
 }
 
 function initStateMap() {
-    var stateMap = L.map('stateMap').setView([41.587972289460076, -93.6332130432129], 12);
+    var stateMap = L.map('stateMap', {
+        center: [41.587972289460076, -93.6332130432129],
+        zoom: 12,
+        minZoom: 8,
+        maxZoom: 16
+    });
     L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(stateMap);
 
-    addTruckToMap(stateMap, 1, 'READY', [41.624424, -93.744167]);
-    addTruckToMap(stateMap, 2, 'TRAVEL', [41.549948, -93.620258]);
+    // addTruckToMap(stateMap, 1, 'READY', [41.624424, -93.744167]);
+    // addTruckToMap(stateMap, 2, 'TRAVEL', [41.549948, -93.620258]);
 
     return stateMap;
 }
@@ -230,6 +238,8 @@ function addTruckToMap(map, truckNumber, status, location) {
         icon = redIcon;
     else if (status == 'UNLOAD')
         icon = blueIcon;
+    else
+        icon = greyIcon;
     L.marker(location, {
             icon: icon,
             keyboard: false,
@@ -263,7 +273,10 @@ function makeRequest(method, url) {
     });
 }
 
+let stateMap;
+
 let initializePage = () => {
+    stateMap = initStateMap();
     buildTruckTable();
     buildCallsTable();
 }
