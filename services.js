@@ -1,10 +1,13 @@
 window.onclick = function (event) {
     let assign_truck_modal = document.getElementById('assign_truck_modal');
     let assign_call_modal = document.getElementById('assign_call_modal');
+    let create_call_modal = document.getElementById('create_call_modal');
     if (event.target == assign_truck_modal) {
         assign_truck_modal.style.display = "none";
     } else if (event.target == assign_call_modal) {
         assign_call_modal.style.display = "none";
+    } else if (event.target == create_call_modal) {
+        create_call_modal.style.display = "none";
     }
 }
 
@@ -34,7 +37,7 @@ function unAssignTruck(clicker) {
     let callId = document.getElementById('assign_truck_submit').dataset.callid;
     let assign_truck_modal = document.getElementById('assign_truck_modal');
     makeRequest('POST', "/calls/unassign/" + callId).then(() => {
-         initializePage();
+        initializePage();
         closeModal(assign_truck_modal.id);
     });
 }
@@ -211,6 +214,36 @@ function openAssignTruckModal(callId) {
         let assign_truck_submit = document.getElementById("assign_truck_submit")
         assign_truck_submit.dataset.callid = callId;
     });
+}
+
+
+function openCreateCallModal(truckId) {
+    let create_call_modal = document.getElementById('create_call_modal');
+    create_call_modal.style.display = "block";
+
+}
+
+function createCall() {
+    // let create_call_form = document.forms.namedItem("create_call_form");
+    let call_first_name = document.getElementById('call_first_name').value;
+    let call_last_name = document.getElementById('call_last_name').value;
+    let call_pick_up_location = document.getElementById('call_pick_up_location').value;
+    let call_drop_off_location = document.getElementById('call_drop_off_location').value;
+    let key_location_select = document.getElementById('key_location_select');
+    let key_location = key_location_select.options[key_location_select.selectedIndex].value;
+    let call_type_select = document.getElementById('call_type_select');
+    let call_type = call_type_select.options[call_type_select.selectedIndex].value;
+    let call_vehicle_make = document.getElementById('call_vehicle_make').value;
+    let call_vehicle_model = document.getElementById('call_vehicle_model').value;
+    let call_vehicle_year = document.getElementById('call_vehicle_year').value;
+    let payment_information_select = document.getElementById('payment_information_select');
+    let payment_information = payment_information_select.options[payment_information_select.selectedIndex].value;
+    let url = "/calls/create/" + call_first_name + "/" + call_last_name + "/" + call_pick_up_location + "/" + call_drop_off_location + "/" + key_location + "/" + call_type + "/" + call_vehicle_make + "/" + call_vehicle_model + "/" + call_vehicle_year + "/" + payment_information;
+    makeRequest("POST", url).then(() => {
+
+    });
+
+
 }
 
 function initStateMap() {
