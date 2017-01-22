@@ -27,6 +27,7 @@ function assignTruck(clicker) {
     let callId = document.getElementById('assign_truck_submit').dataset.callid;
     let assign_truck_modal = document.getElementById('assign_truck_modal');
     makeRequest('POST', "/calls/assign/" + callId + "/" + truckId).then(() => {
+        initializePage();
         closeModal(assign_truck_modal.id);
     });
 }
@@ -36,6 +37,7 @@ function unAssignTruck(clicker) {
     let callId = document.getElementById('assign_truck_submit').dataset.callid;
     let assign_truck_modal = document.getElementById('assign_truck_modal');
     makeRequest('POST', "/calls/unassign/" + callId).then(() => {
+         initializePage();
         closeModal(assign_truck_modal.id);
     });
 }
@@ -45,19 +47,32 @@ function assignCall(clicker) {
     let callId = selector.options[selector.selectedIndex].value;
     let truckId = document.getElementById('assign_call_submit').dataset.truckid;
     let assign_call_modal = document.getElementById('assign_call_modal');
-    makeRequest('POST', "/calls/assign/" + callId + "/" + truckId).then(() => {
+    makeRequest('POST', "/calls/assign/" + callId + "/" + truckId).then((call) => {
+        // updateRow('truck_table', 'truck_row_' + truckId, JSON.parse(call));
+        initializePage();
         closeModal(assign_call_modal.id);
     });
 }
 
+function updateRow(tableId, rowId, data) {
+    let table_to_update = document.getElementById(tableId);
+    let row_to_update = table_to_update.querySelector('#' + rowId);
+
+    // table_to_update.replaceChild( , row_to_update);
+
+}
 
 function buildTruckTable() {
     makeRequest('GET', "/trucks").then((response) => {
         let trucks = JSON.parse(response);
         let truck_table_tbody = document.querySelector("#truck_table tbody");
+        removeChildNodes(truck_table_tbody);
+
+
         trucks.forEach((truck, index) => {
             //create <tr>
             let trElement = document.createElement('tr');
+            trElement.id = "truck_row_" + (index + 1);
             //create <td> elements
             let tdElement = document.createElement('td');
             tdElement.innerText = index + 1;
@@ -97,6 +112,12 @@ function buildTruckTable() {
     });
 }
 
+function removeChildNodes(node) {
+    while (node.firstChild) {
+        node.removeChild(node.firstChild);
+    }
+}
+
 function openAssignCallModal(truckId) {
     makeRequest('GET', '/calls/available').then((calls) => {
         calls = JSON.parse(calls);
@@ -119,6 +140,7 @@ function buildCallsTable() {
     makeRequest('GET', "/calls").then((response) => {
         let calls = JSON.parse(response);
         let call_table_tbody = document.querySelector("#call_table tbody");
+        removeChildNodes(call_table_tbody);
         calls.forEach((call, index) => {
             //create <tr>
             let trElement = document.createElement('tr');
