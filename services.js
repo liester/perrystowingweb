@@ -73,8 +73,7 @@ function buildTruckTable() {
             // addTruckToMap(map, truckNumber, status, location)
             addTruckToMap(stateMap,
                 truck.identifier,
-                truck.truckStatusType, 
-                [parseFloat(truck.gisLatitude, 10), parseFloat(truck.gisLongitude, 10)]);
+                truck.truckStatusType, [parseFloat(truck.gisLatitude, 10), parseFloat(truck.gisLongitude, 10)]);
 
             //create <tr>
             let trElement = document.createElement('tr');
@@ -223,27 +222,36 @@ function openCreateCallModal(truckId) {
 
 }
 
+// function serialize(form) {
+//     var field, s = [];
+//     if (typeof form == 'object' && form.nodeName == "FORM") {
+//         var len = form.elements.length;
+//         for (i = 0; i < len; i++) {
+//             field = form.elements[i];
+//             if (field.name && !field.disabled && field.type != 'file' && field.type != 'reset' && field.type != 'submit' && field.type != 'button') {
+//                 if (field.type == 'select-multiple') {
+//                     for (j = form.elements[i].options.length - 1; j >= 0; j--) {
+//                         if (field.options[j].selected)
+//                             s[s.length] = encodeURIComponent(field.name) + "=" + encodeURIComponent(field.options[j].value);
+//                     }
+//                 } else if ((field.type != 'checkbox' && field.type != 'radio') || field.checked) {
+//                     s[s.length] = encodeURIComponent(field.name) + "=" + encodeURIComponent(field.value);
+//                 }
+//             }
+//         }
+//     }
+//     return s.join('&').replace(/%20/g, '+');
+// }
+
 function createCall() {
-    // let create_call_form = document.forms.namedItem("create_call_form");
-    let call_first_name = document.getElementById('call_first_name').value;
-    let call_last_name = document.getElementById('call_last_name').value;
-    let call_pick_up_location = document.getElementById('call_pick_up_location').value;
-    let call_drop_off_location = document.getElementById('call_drop_off_location').value;
-    let key_location_select = document.getElementById('key_location_select');
-    let key_location = key_location_select.options[key_location_select.selectedIndex].value;
-    let call_type_select = document.getElementById('call_type_select');
-    let call_type = call_type_select.options[call_type_select.selectedIndex].value;
-    let call_vehicle_make = document.getElementById('call_vehicle_make').value;
-    let call_vehicle_model = document.getElementById('call_vehicle_model').value;
-    let call_vehicle_year = document.getElementById('call_vehicle_year').value;
-    let payment_information_select = document.getElementById('payment_information_select');
-    let payment_information = payment_information_select.options[payment_information_select.selectedIndex].value;
-    let url = "/calls/create/" + call_first_name + "/" + call_last_name + "/" + call_pick_up_location + "/" + call_drop_off_location + "/" + key_location + "/" + call_type + "/" + call_vehicle_make + "/" + call_vehicle_model + "/" + call_vehicle_year + "/" + payment_information;
-    makeRequest("POST", url).then(() => {
+    let create_call_form = $('#create_call_form');
+    let originalDomForm = create_call_form[0];
+    if (originalDomForm.checkValidity()) {
+        let call = JSON.stringify(create_call_form.serializeJSON());
+        makeRequest("POST", '/calls/create', call).then(() => {
 
-    });
-
-
+        });
+    }
 }
 
 function initStateMap() {
@@ -281,11 +289,12 @@ function addTruckToMap(map, truckNumber, status, location) {
         .bindPopup('Truck: ' + truckNumber + '<br>Status: ' + status);
 }
 
-function makeRequest(method, url) {
+function makeRequest(method, url, data) {
     return new Promise(function (resolve, reject) {
         var xhr = new XMLHttpRequest();
         url = domain + url;
         xhr.open(method, url);
+        xhr.setRequestHeader("Content-Type", "application/json");
         xhr.onload = function () {
             if (this.status >= 200 && this.status < 300) {
                 resolve(xhr.response);
@@ -302,7 +311,7 @@ function makeRequest(method, url) {
                 statusText: xhr.statusText
             });
         };
-        xhr.send();
+        xhr.send(data);
     });
 }
 
