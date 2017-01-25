@@ -222,33 +222,44 @@ function openCreateCallModal(truckId) {
 
 }
 
-// function serialize(form) {
-//     var field, s = [];
-//     if (typeof form == 'object' && form.nodeName == "FORM") {
-//         var len = form.elements.length;
-//         for (i = 0; i < len; i++) {
-//             field = form.elements[i];
-//             if (field.name && !field.disabled && field.type != 'file' && field.type != 'reset' && field.type != 'submit' && field.type != 'button') {
-//                 if (field.type == 'select-multiple') {
-//                     for (j = form.elements[i].options.length - 1; j >= 0; j--) {
-//                         if (field.options[j].selected)
-//                             s[s.length] = encodeURIComponent(field.name) + "=" + encodeURIComponent(field.options[j].value);
-//                     }
-//                 } else if ((field.type != 'checkbox' && field.type != 'radio') || field.checked) {
-//                     s[s.length] = encodeURIComponent(field.name) + "=" + encodeURIComponent(field.value);
-//                 }
-//             }
-//         }
-//     }
-//     return s.join('&').replace(/%20/g, '+');
-// }
+function serialize(form) {
+    var json = {};
+    var field, s = [];
+    if (typeof form == 'object' && form.nodeName == "FORM") {
+        var len = form.elements.length;
+        for (i = 0; i < len; i++) {
+            field = form.elements[i];
+            if (field.name && !field.disabled && field.type != 'file' && field.type != 'reset' && field.type != 'submit' && field.type != 'button') {
+                if (field.type == 'select-multiple') {
+                    for (j = form.elements[i].options.length - 1; j >= 0; j--) {
+                        if (field.options[j].selected)
+                            s[s.length] = encodeURIComponent(field.name) + "=" + encodeURIComponent(field.options[j].value);
+                    }
+                } else if ((field.type != 'checkbox' && field.type != 'radio') || field.checked) {
+                    var parsedName = field.name.split(".");
+                    parsedName.reduce((obj, i, index) => {
+                        if (index < parsedName.length - 1) {
+                            if (!obj[i]) {
+                                obj[i] = {};
+                            }
+                        } else {
+                            obj[i] = field.value;
+                        }
+                        return obj[i]
+                    }, json);
+                    s[s.length] = encodeURIComponent(field.name) + "=" + encodeURIComponent(field.value);
+                }
+            }
+        }
+    }
+    return json;
+}
 
 function createCall() {
-    let create_call_form = $('#create_call_form');
+    let json = serialize(document.getElementById('create_call_form'));
     let originalDomForm = create_call_form[0];
     if (originalDomForm.checkValidity()) {
-        let call = JSON.stringify(create_call_form.serializeJSON());
-        makeRequest("POST", '/calls/create', call).then(() => {
+        makeRequest("POST", '/calls/create', JSON.stringify(json)).then(() => {
 
         });
     }

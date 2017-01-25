@@ -7,8 +7,6 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css">
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <link rel="stylesheet" href="leaflet/leaflet.css" />
-    <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js"></script>
-    <script src="jquery.serializejson.js"></script>
     <script defer src="services.js"></script>
     <script src="leaflet/leaflet.js"></script>
     <script src="leaflet/leaflet-color-markers.js"></script>
@@ -103,7 +101,128 @@
     </div>
     <div id="create_call_modal">
         <div class="modal-content-lg">
-            <form id="create_call_form">
+              <form id="create_call_form" onsubmit="createCall();return false">
+                <div class="row">
+                    <div class="col">
+                        <div class="row">
+                            <div class="col">
+                                <h4>Customer Info</h4>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <label> First Name:</label>
+                                <input type="text" class="form-control" name="customer.firstName" value="levi" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <label> Last Name: </label>
+                                <input type="text" class="form-control" name="customer.lastName" value="liester">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <label>Phone Number: </label>
+                                <input type="tel" class="form-control" name="customer.phoneNumber" value="876-5309">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <label>Payment Type: </label>
+                                <select type="text" class="form-control">
+                                    <option value = "1">Charge</option>
+                                    <option value = "2">Cash</option>
+                                    <option value = "3">Motor Club</option>
+                                    <option value = "4">Prepaid</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <label>Call Type: </label>
+                                <select type="text" name="callType" class="form-control">
+                                    <option value = "1">Tow</option>
+                                    <option value = "2">Tire Change</option>
+                                    <option value = "3">Unlock</option>
+                                    <option value = "4">Jump Start</option>
+                                    <option value = "5">Winch</option>
+                                    <option value = "6">Impound</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <label>Price Quote: </label>
+                                <input type="text" name="customer.priceQuote" value="10,000" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="row">
+                            <div class="col">
+                                <h4>Vehicle Info</h4>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <label for="pickUpLocation">Pick Up Location: </label>
+                                <input type="text" name="pickUpLocation" value="123 N St." class="form-control">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <label>Drop Off Location: </label>
+                                <input type="text" name="dropOffLocation" value="987 S Ave" class="form-control">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <label> Key Location: </label>
+                                <select type="text" name="customer.vehicle.keyLocationType" id="key_location_select" class="form-control">
+                                    <option value = "1">No Keys</option>
+                                    <option value = "2">Keys in Vehicle</option>
+                                    <option value = "3">Call for Keys</option>
+                                    <option value = "4">Keys at Destination</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <label>Make: </label>
+                                <input type="text" name="customer.vehicle.make" value="Dodge" class="form-control">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <label>Model: </label>
+                                <input type="text" name="customer.vehicle.model" value="Avenger" class="form-control">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <label>Year:</label>
+                                <input type="text" name="customer.vehicle.year" value="2010" class="form-control">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <label>Required Truck Type: </label>
+                                <select type="text" name="customer.towTruckType" class="form-control">
+                                    <option value = "1">Medium</option>
+                                    <option value = "2">Wrecker</option>
+                                    <option value = "3">Flatbed</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="assign_buttons">
+                    <button type="button" class="btn btn-danger" onclick="closeModal('create_call_modal')" style="width: 7em">Cancel</button>
+                    <button id="create_call_submit" type="button" onclick="createCall()" class="btn btn-success" style="width: 7em" ><i class="fa fa-check" aria-hidden="true">&nbsp;</i>Create</button>
+                </div>
+            </form>
+            <!--<form id="create_call_form" onsubmit="createCall();return false">
                 <div class="row">
                     <div class="col">
                         <div class="row">
@@ -160,7 +279,6 @@
                             </div>
                         </div>
                     </div>
-                    <!--Second Column-->
                     <div class="col">
                         <div class="row">
                             <div class="col">
@@ -222,9 +340,9 @@
                 </div>
                 <div class="assign_buttons">
                     <button type="button" class="btn btn-danger" onclick="closeModal('create_call_modal')" style="width: 7em">Cancel</button>
-                    <button id="create_call_submit" type="submit" class="btn btn-success" style="width: 7em" onclick="createCall()"><i class="fa fa-check" aria-hidden="true">&nbsp;</i>Create</button>
+                    <button id="create_call_submit" type="submit" class="btn btn-success" style="width: 7em" ><i class="fa fa-check" aria-hidden="true">&nbsp;</i>Create</button>
                 </div>
-            </form>
+            </form>-->
         </div>
     </div>
     <hr>
