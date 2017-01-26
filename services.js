@@ -27,7 +27,7 @@ function assignTruck(clicker) {
     let callId = document.getElementById('assign_truck_submit').dataset.callid;
     let assign_truck_modal = document.getElementById('assign_truck_modal');
     makeRequest('POST', "/calls/assign/" + callId + "/" + truckId).then(() => {
-        initializePage();
+        refreshData();
         closeModal(assign_truck_modal.id);
     });
 }
@@ -37,7 +37,7 @@ function unAssignTruck(clicker) {
     let callId = document.getElementById('assign_truck_submit').dataset.callid;
     let assign_truck_modal = document.getElementById('assign_truck_modal');
     makeRequest('POST', "/calls/unassign/" + callId).then(() => {
-        initializePage();
+        refreshData();
         closeModal(assign_truck_modal.id);
     });
 }
@@ -48,8 +48,7 @@ function assignCall(clicker) {
     let truckId = document.getElementById('assign_call_submit').dataset.truckid;
     let assign_call_modal = document.getElementById('assign_call_modal');
     makeRequest('POST', "/calls/assign/" + callId + "/" + truckId).then((call) => {
-        // updateRow('truck_table', 'truck_row_' + truckId, JSON.parse(call));
-        initializePage();
+        refreshData();
         closeModal(assign_call_modal.id);
     });
 }
@@ -190,7 +189,21 @@ function buildCallsTable() {
             assignButton.id = "assign_truck_button_" + index;
             assignButton.style.cursor = "pointer";
 
+            let editIcon = document.createElement('i');
+            editIcon.classList.add('fa');
+            editIcon.classList.add('fa-pencil-square-o');
+            editIcon.style.cssFloat = 'right';
+            editIcon.style.marginRight = '2em';
+
+            let span = document.createElement('span');
+            span.addEventListener('click', () => {
+                openEditCallModal(call['id']);
+            });
+            span.style.cursor = "pointer";
+            span.appendChild(editIcon);
+
             tdElement.appendChild(assignButton);
+            tdElement.appendChild(span);
             trElement.appendChild(tdElement);
             call_table_tbody.appendChild(trElement);
         });
@@ -216,15 +229,37 @@ function openAssignTruckModal(callId) {
 }
 
 
-function openCreateCallModal(truckId) {
+function openCreateCallModal() {
     let create_call_modal = document.getElementById('create_call_modal');
     create_call_modal.style.display = "block";
 
 }
 
+
+function openEditCallModal(callId) {
+    makeRequest('GET', '/calls/' + callId).then((callString) => {
+        let call = JSON.parse(callString);
+        let create_call_modal = document.getElementById('create_call_modal');
+        document.getElementsByName('customer.firstName')[0].value = call.customer.firstName;
+        document.getElementsByName('customer.lastName')[0].value = call.customer.lastName;
+        document.getElementsByName('customer.phoneNumber')[0].value = call.customer.phoneNumber;
+        document.getElementsByName('customer.priceQuote')[0].value = call.customer.priceQuote;
+        document.getElementsByName('pickUpLocation')[0].value = call.pickUpLocation;
+        document.getElementsByName('dropOffLocation')[0].value = call.dropOffLocation;
+        document.getElementsByName('customer.vehicle.make')[0].value = call.customer.vehicle.make;
+        document.getElementsByName('customer.vehicle.model')[0].value = call.customer.vehicle.model;
+        document.getElementsByName('customer.vehicle.year')[0].value = call.customer.vehicle.year;
+        document.getElementsByName('customer.vehicle.color')[0].value = call.customer.vehicle.color;
+        document.getElementsByName('customer.vehicle.licensePlateNumber')[0].value = call.customer.vehicle.licensePlateNumber;
+
+        create_call_modal.style.display = "block";
+    });
+
+}
+
+
 function serialize(form) {
     var json = {};
-    var field, s = [];
     if (typeof form == 'object' && form.nodeName == "FORM") {
         var len = form.elements.length;
         for (i = 0; i < len; i++) {
@@ -247,7 +282,6 @@ function serialize(form) {
                         }
                         return obj[i]
                     }, json);
-                    s[s.length] = encodeURIComponent(field.name) + "=" + encodeURIComponent(field.value);
                 }
             }
         }
@@ -260,7 +294,8 @@ function createCall() {
     let originalDomForm = create_call_form[0];
     if (originalDomForm.checkValidity()) {
         makeRequest("POST", '/calls/create', JSON.stringify(json)).then(() => {
-
+            refreshData();
+            closeModal('create_call_modal');
         });
     }
 }
@@ -330,6 +365,11 @@ let stateMap;
 
 let initializePage = () => {
     stateMap = initStateMap();
+    buildTruckTable();
+    buildCallsTable();
+}
+
+let refreshData = () => {
     buildTruckTable();
     buildCallsTable();
 }
