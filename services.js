@@ -231,6 +231,21 @@ function openAssignTruckModal(callId) {
 
 function openCreateCallModal() {
     let create_call_modal = document.getElementById('create_call_modal');
+    document.getElementById('call_id_input').value = "";
+    document.getElementsByName('customer.firstName')[0].value = "";
+    document.getElementsByName('customer.lastName')[0].value = "";
+    document.getElementsByName('customer.phoneNumber')[0].value = "";
+    document.getElementsByName('customer.priceQuote')[0].value = "";
+    document.getElementsByName('pickUpLocation')[0].value = "";
+    document.getElementsByName('dropOffLocation')[0].value = "";
+    document.getElementsByName('customer.vehicle.make')[0].value = "";
+    document.getElementsByName('customer.vehicle.model')[0].value = "";
+    document.getElementsByName('customer.vehicle.year')[0].value = "";
+    document.getElementsByName('customer.vehicle.color')[0].value = "";
+    document.getElementsByName('customer.vehicle.licensePlateNumber')[0].value = "";
+    document.getElementById('delete_call_submit').style.display = "none";
+    document.getElementById('create_call_submit').innerHTML = "<i class='fa fa-check' aria-hidden='true'>&nbsp;</i>Create";
+
     create_call_modal.style.display = "block";
 
 }
@@ -240,6 +255,7 @@ function openEditCallModal(callId) {
     makeRequest('GET', '/calls/' + callId).then((callString) => {
         let call = JSON.parse(callString);
         let create_call_modal = document.getElementById('create_call_modal');
+        document.getElementById("call_id_input").value = call.id;
         document.getElementsByName('customer.firstName')[0].value = call.customer.firstName;
         document.getElementsByName('customer.lastName')[0].value = call.customer.lastName;
         document.getElementsByName('customer.phoneNumber')[0].value = call.customer.phoneNumber;
@@ -251,6 +267,8 @@ function openEditCallModal(callId) {
         document.getElementsByName('customer.vehicle.year')[0].value = call.customer.vehicle.year;
         document.getElementsByName('customer.vehicle.color')[0].value = call.customer.vehicle.color;
         document.getElementsByName('customer.vehicle.licensePlateNumber')[0].value = call.customer.vehicle.licensePlateNumber;
+        document.getElementById('delete_call_submit').style.display = "";
+        document.getElementById('create_call_submit').innerHTML = "<i class='fa fa-check' aria-hidden='true'>&nbsp;</i>Update";
 
         create_call_modal.style.display = "block";
     });
@@ -291,9 +309,21 @@ function serialize(form) {
 
 function createCall() {
     let json = serialize(document.getElementById('create_call_form'));
-    let originalDomForm = create_call_form[0];
+    let originalDomForm = document.getElementById('create_call_form')[0];
     if (originalDomForm.checkValidity()) {
         makeRequest("POST", '/calls/create', JSON.stringify(json)).then(() => {
+            refreshData();
+            closeModal('create_call_modal');
+        });
+    }
+}
+
+function deleteCall() {
+    let json = serialize(document.getElementById('create_call_form'));
+    let call_id = document.getElementById("call_id_input").value;
+    let originalDomForm = document.getElementById('create_call_form')[0];
+    if (originalDomForm.checkValidity()) {
+        makeRequest("POST", '/calls/delete/' + call_id).then(() => {
             refreshData();
             closeModal('create_call_modal');
         });
