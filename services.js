@@ -70,9 +70,9 @@ function buildTruckTable() {
 
         trucks.forEach((truck, index) => {
             // addTruckToMap(map, truckNumber, status, location)
-            addTruckToMap(stateMap,
-                truck.identifier,
-                truck.truckStatusType, [parseFloat(truck.gisLatitude, 10), parseFloat(truck.gisLongitude, 10)]);
+            // addTruckToMap(stateMap,
+            //     truck.identifier,
+            //     truck.truckStatusType, [parseFloat(truck.gisLatitude, 10), parseFloat(truck.gisLongitude, 10)]);
 
             //create <tr>
             let trElement = document.createElement('tr');
@@ -408,7 +408,7 @@ function makeRequest(method, url, data) {
 let stateMap;
 
 let initializePage = () => {
-    stateMap = initStateMap();
+    // stateMap = initStateMap();
     buildTruckTable();
     buildCallsTable();
 }
