@@ -1,3 +1,5 @@
+var locale = window.navigator.userLanguage || window.navigator.language
+
 window.onclick = function (event) {
     let assign_truck_modal = document.getElementById('assign_truck_modal');
     let assign_call_modal = document.getElementById('assign_call_modal');
@@ -91,7 +93,7 @@ function buildTruckTable() {
             trElement.appendChild(tdElement);
 
             tdElement = document.createElement('td');
-            tdElement.innerText = 'MB Status';
+            tdElement.innerText = truck['truckStatusType'];
             trElement.appendChild(tdElement);
 
             tdElement = document.createElement('td');
@@ -101,7 +103,7 @@ function buildTruckTable() {
             tdElement = document.createElement('td');
             let assignButton = document.createElement('input');
             assignButton.type = 'button';
-            assignButton.value = 'Assign Call';
+            assignButton.value = 'Update Priority';
             assignButton.classList.add('btn', 'btn-primary');
             assignButton.addEventListener('click', () => {
                 openAssignCallModal(truck['id']);
@@ -170,6 +172,12 @@ function buildCallsTable() {
             trElement.appendChild(tdElement);
 
             tdElement = document.createElement('td');
+            tdElement.classList.add('nowrap');
+            let callTime = moment.unix(call['insertTime'])
+            tdElement.innerText = callTime.format('MMM Do h:mm:ss a');
+            trElement.appendChild(tdElement);
+
+            tdElement = document.createElement('td');
             tdElement.innerText = call['truckId'];
             trElement.appendChild(tdElement);
 
@@ -204,6 +212,7 @@ function buildCallsTable() {
 
             tdElement.appendChild(assignButton);
             tdElement.appendChild(span);
+            tdElement.classList.add('nowrap');
             trElement.appendChild(tdElement);
             call_table_tbody.appendChild(trElement);
         });

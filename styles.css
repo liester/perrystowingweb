@@ -59,6 +59,10 @@ table thead {
     background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
 }
 
+.nowrap {
+    white-space: nowrap;
+}
+
 /* Modal Content/Box */
 .modal-content {
     background-color: #fefefe;
