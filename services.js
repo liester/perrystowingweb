@@ -71,11 +71,6 @@ function buildTruckTable() {
 
 
         trucks.forEach((truck, index) => {
-            // addTruckToMap(map, truckNumber, status, location)
-            // addTruckToMap(stateMap,
-            //     truck.identifier,
-            //     truck.truckStatusType, [parseFloat(truck.gisLatitude, 10), parseFloat(truck.gisLongitude, 10)]);
-
             //create <tr>
             let trElement = document.createElement('tr');
             trElement.id = "truck_row_" + (index + 1);
@@ -97,21 +92,9 @@ function buildTruckTable() {
             trElement.appendChild(tdElement);
 
             tdElement = document.createElement('td');
-            tdElement.innerText = truck['numberOfCalls'];
+            tdElement.innerText = truck['dropOffLocation']||'None';
             trElement.appendChild(tdElement);
-            //Uncomment if you want to add the action button back
-            // tdElement = document.createElement('td');
-            // let assignButton = document.createElement('input');
-            // assignButton.type = 'button';
-            // assignButton.value = 'Update Priority';
-            // assignButton.classList.add('btn', 'btn-primary');
-            // assignButton.addEventListener('click', () => {
-            //     openAssignCallModal(truck['id']);
-            // });
-            // assignButton.id = "assign_call_button_" + index;
-            // assignButton.style.cursor = "pointer";
-
-            // tdElement.appendChild(assignButton);
+          
             trElement.appendChild(tdElement);
             truck_table_tbody.appendChild(trElement);
         });
