@@ -99,19 +99,19 @@ function buildTruckTable() {
             tdElement = document.createElement('td');
             tdElement.innerText = truck['numberOfCalls'];
             trElement.appendChild(tdElement);
+            //Uncomment if you want to add the action button back
+            // tdElement = document.createElement('td');
+            // let assignButton = document.createElement('input');
+            // assignButton.type = 'button';
+            // assignButton.value = 'Update Priority';
+            // assignButton.classList.add('btn', 'btn-primary');
+            // assignButton.addEventListener('click', () => {
+            //     openAssignCallModal(truck['id']);
+            // });
+            // assignButton.id = "assign_call_button_" + index;
+            // assignButton.style.cursor = "pointer";
 
-            tdElement = document.createElement('td');
-            let assignButton = document.createElement('input');
-            assignButton.type = 'button';
-            assignButton.value = 'Update Priority';
-            assignButton.classList.add('btn', 'btn-primary');
-            assignButton.addEventListener('click', () => {
-                openAssignCallModal(truck['id']);
-            });
-            assignButton.id = "assign_call_button_" + index;
-            assignButton.style.cursor = "pointer";
-
-            tdElement.appendChild(assignButton);
+            // tdElement.appendChild(assignButton);
             trElement.appendChild(tdElement);
             truck_table_tbody.appendChild(trElement);
         });
@@ -220,7 +220,7 @@ function buildCallsTable() {
 }
 
 function openAssignTruckModal(callId) {
-    makeRequest('GET', '/trucks').then((trucks) => {
+    makeRequest('GET', '/trucks/available').then((trucks) => {
         trucks = JSON.parse(trucks);
         let truck_modal = document.getElementById('assign_truck_modal');
         truck_modal.style.display = "block";
