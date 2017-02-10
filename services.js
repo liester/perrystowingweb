@@ -161,7 +161,7 @@ function buildCallsTable() {
             trElement.appendChild(tdElement);
 
             tdElement = document.createElement('td');
-            tdElement.innerText = call['truckId'];
+            tdElement.innerText = call['truckIdentifier'];
             trElement.appendChild(tdElement);
 
             tdElement = document.createElement('td');
