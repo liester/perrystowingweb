@@ -92,9 +92,9 @@ function buildTruckTable() {
             trElement.appendChild(tdElement);
 
             tdElement = document.createElement('td');
-            tdElement.innerText = truck['dropOffLocation']||'None';
+            tdElement.innerText = truck['dropOffLocation'] || 'None';
             trElement.appendChild(tdElement);
-          
+
             trElement.appendChild(tdElement);
             truck_table_tbody.appendChild(trElement);
         });
@@ -144,6 +144,11 @@ function buildCallsTable() {
 
             tdElement = document.createElement('td');
             tdElement.innerText = call.customer['firstName'] + ' ' + call.customer['lastName'];
+            trElement.appendChild(tdElement);
+
+            tdElement = document.createElement('td');
+            let vehicle = call.customer.vehicle;
+            tdElement.innerText = vehicle['year'] + ' ' + vehicle['make'] + ' ' + vehicle['model'];
             trElement.appendChild(tdElement);
 
             tdElement = document.createElement('td');
