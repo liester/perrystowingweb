@@ -1,5 +1,3 @@
-var locale = window.navigator.userLanguage || window.navigator.language
-
 window.onclick = function (event) {
     let assign_truck_modal = document.getElementById('assign_truck_modal');
     let assign_call_modal = document.getElementById('assign_call_modal');
@@ -401,6 +399,29 @@ function makeRequest(method, url, data) {
         xhr.send(data);
     });
 }
+let interval;
+
+function createRefreshTimer(duration) {
+    if(interval){
+        clearInterval(interval);
+    }
+    let timer = duration;
+    let minutes;
+    let seconds;
+    interval = setInterval(function () {
+        minutes = parseInt(timer / 60, 10);
+        seconds = parseInt(timer % 60, 10);
+
+        minutes = minutes < 10 ? "0" + minutes : minutes;
+        seconds = seconds < 10 ? "0" + seconds : seconds;
+
+        document.getElementById("refresh_time").textContent = minutes + "m" + seconds + "s";
+
+        if (--timer < 0) {
+           refreshData();
+        }
+    }, 1000);
+}
 
 let stateMap;
 
@@ -408,11 +429,13 @@ let initializePage = () => {
     // stateMap = initStateMap();
     buildTruckTable();
     buildCallsTable();
+    createRefreshTimer(10);
 }
 
 let refreshData = () => {
     buildTruckTable();
     buildCallsTable();
+    createRefreshTimer(300);
 }
 
 initializePage();
