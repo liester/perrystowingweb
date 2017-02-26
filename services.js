@@ -429,13 +429,13 @@ let initializePage = () => {
     // stateMap = initStateMap();
     buildTruckTable();
     buildCallsTable();
-    createRefreshTimer(500);
+    createRefreshTimer(300);
 }
 
 let refreshData = () => {
     buildTruckTable();
     buildCallsTable();
-    createRefreshTimer(500);
+    createRefreshTimer(300);
 }
 
 initializePage();
