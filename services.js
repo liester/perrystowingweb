@@ -124,7 +124,7 @@ function openAssignCallModal(truckId) {
 }
 
 function buildCallsTable() {
-    makeRequest('GET', "/calls").then((response) => {
+    makeRequest('GET', "/calls/nonComplete").then((response) => {
         let calls = JSON.parse(response);
         let call_table_tbody = document.querySelector("#call_table tbody");
         removeChildNodes(call_table_tbody);
