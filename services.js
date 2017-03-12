@@ -461,6 +461,7 @@ function createRefreshTimer(duration) {
     }, 1000);
 }
 
+
 let initializePage = () => {
     buildTruckTable();
     buildCallsTable();
