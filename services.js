@@ -2,12 +2,15 @@ window.onclick = function (event) {
     let assign_truck_modal = document.getElementById('assign_truck_modal');
     let assign_call_modal = document.getElementById('assign_call_modal');
     let create_call_modal = document.getElementById('create_call_modal');
+    let create_truck_modal = document.getElementById('create_truck_modal');
     if (event.target == assign_truck_modal) {
         assign_truck_modal.style.display = "none";
     } else if (event.target == assign_call_modal) {
         assign_call_modal.style.display = "none";
     } else if (event.target == create_call_modal) {
         create_call_modal.style.display = "none";
+    } else if (event.target == create_truck_modal) {
+        create_truck_modal.style.display = "none";
     }
 }
 
@@ -95,6 +98,21 @@ function buildTruckTable() {
 
             trElement.appendChild(tdElement);
             truck_table_tbody.appendChild(trElement);
+
+            let editIcon = document.createElement('i');
+            editIcon.classList.add('fa');
+            editIcon.classList.add('fa-pencil-square-o');
+            editIcon.style.cssFloat = 'right';
+            editIcon.style.marginRight = '2em';
+
+            let span = document.createElement('span');
+            span.addEventListener('click', () => {
+                openEditTruckModal(truck['id']);
+            });
+            span.style.cursor = "pointer";
+            span.appendChild(editIcon);
+
+            tdElement.appendChild(span);
         });
     });
 }
@@ -274,6 +292,39 @@ function openEditCallModal(callId) {
 }
 
 
+function openCreateTruckModal() {
+    // console.log('create truck');
+    let create_truck_modal = document.getElementById('create_truck_modal');
+    document.getElementById("truck_id_input").value = "";
+    document.getElementsByName('identifier')[0].value = "";
+    document.getElementsByName('driverLastName')[0].value = "";
+    document.getElementsByName('driverFirstName')[0].value = "";
+    document.getElementById('delete_truck_submit').style.display = "none";
+    let create_truck_submit = document.getElementById('create_truck_submit');
+    create_truck_submit.innerHTML = "<i class='fa fa-check' aria-hidden='true'>&nbsp;</i>Create";
+    create_truck_submit.onclick = createTruck;
+    create_truck_modal.style.display = "block";
+
+}
+function openEditTruckModal(truckId) {
+    makeRequest('GET', '/trucks/' + truckId).then((truckString) => {
+        let truck = JSON.parse(truckString);
+        let create_truck_modal = document.getElementById('create_truck_modal');
+        document.getElementById("truck_id_input").value = truck.id;
+        document.getElementsByName('identifier')[0].value = truck.identifier;
+        document.getElementsByName('driverFirstName')[0].value = truck.driverFirstName;
+        document.getElementsByName('driverLastName')[0].value = truck.driverLastName;
+        document.getElementById('delete_truck_submit').style.display = "";
+        let create_truck_submit = document.getElementById('create_truck_submit');
+        create_truck_submit.innerHTML = "<i class='fa fa-check' aria-hidden='true'>&nbsp;</i>Update";
+        create_truck_submit.onclick = editTruck;
+
+        create_truck_modal.style.display = "block";
+    });
+
+}
+
+
 function serialize(form) {
     var json = {};
     if (typeof form == 'object' && form.nodeName == "FORM") {
@@ -316,6 +367,17 @@ function createCall() {
     }
 }
 
+function createTruck() {
+    let json = serialize(document.getElementById('create_truck_form'));
+    let originalDomForm = document.getElementById('create_truck_form')[0];
+    if (originalDomForm.checkValidity()) {
+        makeRequest("POST", '/trucks/create', JSON.stringify(json)).then(() => {
+            refreshData();
+            closeModal('create_truck_modal');
+        });
+    }
+}
+
 function editCall() {
     let json = serialize(document.getElementById('create_call_form'));
     let originalDomForm = document.getElementById('create_call_form')[0];
@@ -323,6 +385,17 @@ function editCall() {
         makeRequest("POST", '/calls/edit', JSON.stringify(json)).then(() => {
             refreshData();
             closeModal('create_call_modal');
+        });
+    }
+}
+
+function editTruck() {
+    let json = serialize(document.getElementById('create_truck_form'));
+    let originalDomForm = document.getElementById('create_truck_form')[0];
+    if (originalDomForm.checkValidity()) {
+        makeRequest("POST", '/trucks/edit', JSON.stringify(json)).then(() => {
+            refreshData();
+            closeModal('create_truck_modal');
         });
     }
 }
@@ -367,10 +440,10 @@ function addTruckToMap(map, truckNumber, status, location) {
     else
         icon = greyIcon;
     L.marker(location, {
-            icon: icon,
-            keyboard: false,
-            title: status
-        }).addTo(map)
+        icon: icon,
+        keyboard: false,
+        title: status
+    }).addTo(map)
         .bindPopup('Truck: ' + truckNumber + '<br>Status: ' + status);
 }
 
@@ -402,7 +475,7 @@ function makeRequest(method, url, data) {
 let interval;
 
 function createRefreshTimer(duration) {
-    if(interval){
+    if (interval) {
         clearInterval(interval);
     }
     let timer = duration;
@@ -418,7 +491,7 @@ function createRefreshTimer(duration) {
         document.getElementById("refresh_time").textContent = minutes + "m" + seconds + "s";
 
         if (--timer < 0) {
-           refreshData();
+            refreshData();
         }
     }, 1000);
 }
