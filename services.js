@@ -499,7 +499,7 @@ function createRefreshTimer(duration) {
 let stateMap;
 
 let initializePage = () => {
-    stateMap = initStateMap();
+    // stateMap = initStateMap();
     buildTruckTable();
     buildCallsTable();
     createRefreshTimer(300);
