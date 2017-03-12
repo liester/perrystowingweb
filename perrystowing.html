@@ -20,7 +20,9 @@
             <div class="table_heading">
                 <span class="table_content_header">Trucks</span>
                 <span>
-                    <!--<button type="button" class="btn btn-primary float-right">Create Truck</button>-->
+                   <span>
+                    <button type="button" class="btn btn-primary float-right" onclick="openCreateTruckModal()">Create Truck</button>
+                </span>
                 </span>
             </div>
             <table id="truck_table" class="table table-striped table-hover">
@@ -100,6 +102,46 @@
                 <button type="button" class="btn btn-danger" onclick="closeModal('assign_call_modal')" style="width: 7em">Cancel</button>
                 <button id="assign_call_submit" data-truckid="" type="button" class="btn btn-success" onclick="assignCall(this)" style="width: 7em"><i class="fa fa-check" aria-hidden="true">&nbsp;</i>Assign</button>
             </div>
+        </div>
+    </div>
+
+    <div id="create_truck_modal">
+        <div class="modal-content-lg">
+            <form id="create_truck_form" onsubmit="createTruck();return false">
+                <div class="row">
+                    <div class="col">
+                        <div class="row">
+                            <div class="col">
+                                <h4>Truck Information</h4>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4 offset-4">
+                                <label> Driver Identifier:</label>
+                                <input type="text" class="form-control" name="identifier" required>
+                            </div>
+                        </div>
+                         <div class="row">
+                             <div class="col-sm-4 offset-4">
+                                <label> First Name: </label>
+                                <input type="text" class="form-control" name="driverFirstName">
+                            </div>
+                        </div>
+                        <div class="row">
+                             <div class="col-sm-4 offset-4">
+                                <label> Last Name: </label>
+                                <input type="text" class="form-control" name="driverLastName">
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" value="" name="id" id="truck_id_input">
+                </div>
+                <div class="assign_buttons" id="truck_modal_buttons">
+                    <button type="button" class="btn btn-danger" onclick="closeModal('create_truck_modal')" style="width: 7em">Cancel</button>
+                    <button id="create_truck_submit" type="button" onclick="createTruck()" class="btn btn-success" style="width: 7em"><i class="fa fa-check" aria-hidden="true">&nbsp;</i>Create</button>
+                    <button id="delete_truck_submit" type="button" onclick="deleteTruck()" class="btn btn-warning" style="width: 7em"><i class="fa fa-trash-o" aria-hidden="true">&nbsp;</i>Delete</button>
+                </div>
+            </form>
         </div>
     </div>
     <div id="create_call_modal">
