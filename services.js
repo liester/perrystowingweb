@@ -412,41 +412,6 @@ function deleteCall() {
     }
 }
 
-function initStateMap() {
-    var stateMap = L.map('stateMap', {
-        center: [41.587972289460076, -93.6332130432129],
-        zoom: 12,
-        minZoom: 8,
-        maxZoom: 16
-    });
-    L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(stateMap);
-
-    // addTruckToMap(stateMap, 1, 'READY', [41.624424, -93.744167]);
-    // addTruckToMap(stateMap, 2, 'TRAVEL', [41.549948, -93.620258]);
-
-    return stateMap;
-}
-
-function addTruckToMap(map, truckNumber, status, location) {
-    var icon;
-    if (status == 'READY')
-        icon = greenIcon;
-    else if (status == 'TRAVEL')
-        icon = redIcon;
-    else if (status == 'UNLOAD')
-        icon = blueIcon;
-    else
-        icon = greyIcon;
-    L.marker(location, {
-        icon: icon,
-        keyboard: false,
-        title: status
-    }).addTo(map)
-        .bindPopup('Truck: ' + truckNumber + '<br>Status: ' + status);
-}
-
 function makeRequest(method, url, data) {
     return new Promise(function (resolve, reject) {
         var xhr = new XMLHttpRequest();
@@ -496,10 +461,7 @@ function createRefreshTimer(duration) {
     }, 1000);
 }
 
-let stateMap;
-
 let initializePage = () => {
-    stateMap = initStateMap();
     buildTruckTable();
     buildCallsTable();
     createRefreshTimer(300);
