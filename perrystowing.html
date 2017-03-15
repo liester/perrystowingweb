@@ -122,14 +122,14 @@
                                 <input type="text" class="form-control" name="identifier" required>
                             </div>
                         </div>
-                         <div class="row">
-                             <div class="col-sm-4 offset-4">
+                        <div class="row">
+                            <div class="col-sm-4 offset-4">
                                 <label> First Name: </label>
                                 <input type="text" class="form-control" name="driverFirstName">
                             </div>
                         </div>
                         <div class="row">
-                             <div class="col-sm-4 offset-4">
+                            <div class="col-sm-4 offset-4">
                                 <label> Last Name: </label>
                                 <input type="text" class="form-control" name="driverLastName">
                             </div>
@@ -158,7 +158,7 @@
                         <div class="row">
                             <div class="col">
                                 <label> First Name:</label>
-                                <input type="text" class="form-control" name="customer.firstName" required>
+                                <input type="text" class="form-control" name="customer.firstName">
                             </div>
                         </div>
                         <div class="row">
@@ -177,6 +177,7 @@
                             <div class="col">
                                 <label>Payment Type: </label>
                                 <select type="text" name="customer.paymentType" class="form-control">
+                                    <option value = "0"></option>
                                     <option value = "1">Charge</option>
                                     <option value = "2">Cash</option>
                                     <option value = "3">Motor Club</option>
@@ -188,6 +189,7 @@
                             <div class="col">
                                 <label>Call Type: </label>
                                 <select type="text" name="callType" class="form-control">
+                                    <option value = "0"></option>
                                     <option value = "1">Tow</option>
                                     <option value = "2">Tire Change</option>
                                     <option value = "3">Unlock</option>
@@ -206,7 +208,7 @@
                         <div class="row">
                             <div class="col">
                                 <label>Comment: </label><br/>
-                                <textarea maxlength="500" rows="8"name="comment" class="form-control"></textarea>
+                                <textarea maxlength="500" rows="8" name="comment" class="form-control"></textarea>
                             </div>
                         </div>
                     </div>
@@ -233,11 +235,19 @@
                             <div class="col">
                                 <label> Key Location: </label>
                                 <select type="text" name="customer.vehicle.keyLocationType" id="key_location_select" class="form-control">
+                                    <option value = "0"></option>
                                     <option value = "1">No Keys</option>
                                     <option value = "2">Keys in Vehicle</option>
                                     <option value = "3">Call for Keys</option>
                                     <option value = "4">Keys at Destination</option>
+                                    <option value = "5">Keys with owner/shop</option>
                                 </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <label>Year:</label>
+                                <input type="text" name="customer.vehicle.year" class="form-control">
                             </div>
                         </div>
                         <div class="row">
@@ -250,12 +260,6 @@
                             <div class="col">
                                 <label>Model: </label>
                                 <input type="text" name="customer.vehicle.model" class="form-control">
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col">
-                                <label>Year:</label>
-                                <input type="text" name="customer.vehicle.year" class="form-control">
                             </div>
                         </div>
                         <div class="row">
@@ -274,6 +278,7 @@
                             <div class="col">
                                 <label>Required Truck Type: </label>
                                 <select type="text" name="towTruckType" class="form-control">
+                                    <option value = "0"></option>
                                     <option value = "1">Medium</option>
                                     <option value = "2">Wrecker</option>
                                     <option value = "3">Flatbed</option>

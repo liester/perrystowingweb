@@ -256,6 +256,12 @@ function openCreateCallModal() {
     document.getElementsByName('customer.vehicle.year')[0].value = "";
     document.getElementsByName('customer.vehicle.color')[0].value = "";
     document.getElementsByName('customer.vehicle.licensePlateNumber')[0].value = "";
+    document.getElementsByName('comment')[0].value = "";
+    document.getElementsByName('customer.vehicle.keyLocationType')[0].value = 1;
+    document.getElementsByName('towTruckType')[0].value = 1;
+    document.getElementsByName('customer.paymentType')[0].value = 1;
+    document.getElementsByName('callType')[0].value = 1;
+
     document.getElementById('delete_call_submit').style.display = "none";
     let create_call_submit = document.getElementById('create_call_submit');
     create_call_submit.innerHTML = "<i class='fa fa-check' aria-hidden='true'>&nbsp;</i>Create";
@@ -273,7 +279,7 @@ function openEditCallModal(callId) {
         document.getElementsByName('customer.firstName')[0].value = call.customer.firstName;
         document.getElementsByName('customer.lastName')[0].value = call.customer.lastName;
         document.getElementsByName('customer.phoneNumber')[0].value = call.customer.phoneNumber;
-        document.getElementsByName('customer.priceQuote')[0].value = call.customer.priceQuote;
+        document.getElementsByName('customer.priceQuote')[0].value = call.customer.priceQuote.trim();
         document.getElementsByName('pickUpLocation')[0].value = call.pickUpLocation;
         document.getElementsByName('dropOffLocation')[0].value = call.dropOffLocation;
         document.getElementsByName('customer.vehicle.make')[0].value = call.customer.vehicle.make;
@@ -281,6 +287,30 @@ function openEditCallModal(callId) {
         document.getElementsByName('customer.vehicle.year')[0].value = call.customer.vehicle.year;
         document.getElementsByName('customer.vehicle.color')[0].value = call.customer.vehicle.color;
         document.getElementsByName('customer.vehicle.licensePlateNumber')[0].value = call.customer.vehicle.licensePlateNumber;
+        document.getElementsByName('comment')[0].value = call.comment.trim();
+        if (call.towTruckType) {
+            document.getElementsByName('towTruckType')[0].value = call.towTruckType.id;
+        } else {
+            document.getElementsByName('towTruckType')[0].value = 0;
+        }
+
+        if (call.customer.vehicle.keyLocationType) {
+            document.getElementsByName('customer.vehicle.keyLocationType')[0].value = call.customer.vehicle.keyLocationType.id;
+        } else {
+            document.getElementsByName('customer.vehicle.keyLocationType')[0].value = 0;
+        }
+
+        if (call.customer.paymentType) {
+            document.getElementsByName('customer.paymentType')[0].value = call.customer.paymentType.id;
+        } else {
+            document.getElementsByName('customer.paymentType')[0].value = 0;
+        }
+
+        if (call.callType) {
+            document.getElementsByName('callType')[0].value = call.callType.id;
+        } else {
+            document.getElementsByName('callType')[0].value = 0;
+        }
         document.getElementById('delete_call_submit').style.display = "";
         let create_call_submit = document.getElementById('create_call_submit');
         create_call_submit.innerHTML = "<i class='fa fa-check' aria-hidden='true'>&nbsp;</i>Update";
