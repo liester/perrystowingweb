@@ -17,13 +17,14 @@
     <div id="main_content">
         <label>Next Refresh:</label><label id="refresh_time">5m 00s</label>
         <label style="float: right"><a href="/perrystowingmap.html">Go To Map</a></label>
+        <div>
+            <button style="float: left" type="button" class="btn btn-primary" onclick="openUpdateClientIdModal()">Update Clients</button>
+        </div>
         <div class="table_content">
             <div class="table_heading">
                 <span class="table_content_header">Trucks</span>
                 <span>
-                   <span>
                     <button type="button" class="btn btn-primary float-right" onclick="openCreateTruckModal()">Create Truck</button>
-                </span>
                 </span>
             </div>
             <table id="truck_table" class="table table-striped table-hover">
@@ -102,6 +103,18 @@
             <div class="assign_buttons">
                 <button type="button" class="btn btn-danger" onclick="closeModal('assign_call_modal')" style="width: 7em">Cancel</button>
                 <button id="assign_call_submit" data-truckid="" type="button" class="btn btn-success" onclick="assignCall(this)" style="width: 7em"><i class="fa fa-check" aria-hidden="true">&nbsp;</i>Assign</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="update_client_ids_modal">
+        <div class="modal-content">
+            <div id = "client_id_list">
+                <!--dynamically added-->
+            </div>
+            <div class="assign_buttons">
+                <button type="button" class="btn btn-danger" onclick="closeModal('update_client_ids_modal')" style="width: 7em">Cancel</button>
+                <button id="assign_call_submit" type="button" class="btn btn-success" onclick="updateClientIds(this)" style="width: 7em"><i class="fa fa-check" aria-hidden="true">&nbsp;</i>Update</button>
             </div>
         </div>
     </div>

@@ -3,6 +3,7 @@ window.onclick = function (event) {
     let assign_call_modal = document.getElementById('assign_call_modal');
     let create_call_modal = document.getElementById('create_call_modal');
     let create_truck_modal = document.getElementById('create_truck_modal');
+    let update_client_ids_modal = document.getElementById('update_client_ids_modal');
     if (event.target == assign_truck_modal) {
         assign_truck_modal.style.display = "none";
     } else if (event.target == assign_call_modal) {
@@ -10,6 +11,8 @@ window.onclick = function (event) {
     } else if (event.target == create_call_modal) {
         create_call_modal.style.display = "none";
     } else if (event.target == create_truck_modal) {
+        create_truck_modal.style.display = "none";
+    } else if (event.target == update_client_ids_modal) {
         create_truck_modal.style.display = "none";
     }
 }
@@ -138,6 +141,56 @@ function openAssignCallModal(truckId) {
         });
         let assign_call_submit = document.getElementById("assign_call_submit")
         assign_call_submit.dataset.truckid = truckId;
+    });
+}
+
+function openUpdateClientIdModal() {
+    makeRequest('GET', '/clients').then((clients) => {
+        clients = JSON.parse(clients);
+        let client_id_list = document.querySelector("#client_id_list");
+        removeChildNodes(client_id_list);
+        let update_client_ids_modal = document.getElementById('update_client_ids_modal');
+        update_client_ids_modal.style.display = "block";
+
+        // build headers
+        let headers = document.createElement('div');
+        headers.classList.add('row')
+        let headerColumn1 = document.createElement('div');
+        headerColumn1.classList.add('col-sm-1');
+        headerColumn1.innerText = "ID";
+
+        let headerColumn2 = document.createElement('div');
+        headerColumn2.classList.add('col-sm-7');
+        headerColumn2.innerText = "Client ID";
+
+        let headerColumn3 = document.createElement('div');
+        headerColumn3.classList.add('col-sm-2');
+        headerColumn3.innerText = "Role";
+        headers.appendChild(headerColumn1);
+        headers.appendChild(headerColumn2);
+        headers.appendChild(headerColumn3);
+        client_id_list.appendChild(headers);
+
+
+        clients.forEach((client) => {
+            let row = document.createElement('div');
+            row.classList.add('row')
+            let col1 = document.createElement('div');
+            col1.classList.add('col-sm-1');
+            col1.innerText = client.id;
+            let col2Input = document.createElement('input');
+            col2Input.classList.add('col-sm-7');
+            col2Input.maxLength = 16;
+            col2Input.value = client.clientId;
+            let col3Input = document.createElement('input');
+            col3Input.classList.add('col-sm-2');
+            col3Input.maxLength = 2;
+            col3Input.value = client.role;
+            row.appendChild(col1);
+            row.appendChild(col2Input);
+            row.appendChild(col3Input);
+            client_id_list.appendChild(row);
+        });
     });
 }
 
@@ -448,6 +501,9 @@ function makeRequest(method, url, data) {
         url = domain + url;
         xhr.open(method, url);
         xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.withCredentials = true;
+        console.log(document.cookie);
+        xhr.setRequestHeader('ClientCookies', document.cookie);
         xhr.onload = function () {
             if (this.status >= 200 && this.status < 300) {
                 resolve(xhr.response);
