@@ -495,6 +495,18 @@ function deleteCall() {
     }
 }
 
+function deleteTruck() {
+    let json = serialize(document.getElementById('create_truck_modal'));
+    let truck_id = document.getElementById("truck_id_input").value;
+    let originalDomForm = document.getElementById('create_truck_form')[0];
+    if (originalDomForm.checkValidity()) {
+        makeRequest("POST", '/trucks/delete/' + truck_id).then(() => {
+            refreshData();
+            closeModal('create_truck_modal');
+        });
+    }
+}
+
 function makeRequest(method, url, data) {
     return new Promise(function (resolve, reject) {
         var xhr = new XMLHttpRequest();
