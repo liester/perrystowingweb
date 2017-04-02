@@ -49,7 +49,7 @@ function initStateMap() {
     return stateMap;
 }
 
-function addTruckToMap(map, truckNumber, status, updateTime, location) {
+function createTruckMarker(truckNumber, status, updateTime, location) {
     var icon;
     if (status.toUpperCase() == 'AVAILABLE')
         icon = greenIcon;
@@ -59,22 +59,31 @@ function addTruckToMap(map, truckNumber, status, updateTime, location) {
         icon = blueIcon;
     else
         icon = greyIcon;
-    L.marker(location, {
+    var marker = L.marker(location, {
         icon: icon,
         keyboard: false,
         title: status
-    }).addTo(map)
-        .bindPopup('Truck: ' + truckNumber + '<br>Status: ' + status + '<br>Update Time: ' + updateTime);
+    }).bindPopup('Truck: ' + truckNumber + '<br>Status: ' + status + '<br>Update Time: ' + updateTime);
+    return marker;
 }
 
 function getTrucksAddToMap(map) {
-	makeRequest('GET', "/trucks").then((response) => {
-		let trucks = JSON.parse(response);
-		trucks.forEach(function(truck) {
-			let callTime = moment.unix(truck.updateTime)
-			addTruckToMap(map, truck.identifier, truck.truckStatusType, callTime.format('MMM Do h:mm:ss a'), [truck.gisLatitude, truck.gisLongitude]);
-		});
-	});
+    // NOTE: The first thing we do here is clear the markers from the layer.
+    markersLayer.clearLayers();
+    makeRequest('GET', "/trucks").then((response) => {
+        let trucks = JSON.parse(response);
+        let validGpsTrucks = trucks.filter(function (truck) {
+            return truck.gisLatitude && truck.gisLongitude;
+        });
+        validGpsTrucks.forEach(function (truck) {
+            console.log('id:' + truck.id + '|gisLat:' + truck.gisLatitude + '|gisLon:' + truck.gisLongitude);
+            let callTime = moment.unix(truck.updateTime)
+            let marker = createTruckMarker(truck.identifier, truck.truckStatusType, callTime.format('MMM Do h:mm:ss a'), [truck.gisLatitude, truck.gisLongitude]);
+            markersLayer.addLayer(marker);
+            markers.push(marker);
+        });
+        markersLayer.addTo(map);
+    });
 }
 
 function makeRequest(method, url, data) {
@@ -127,6 +136,8 @@ function createRefreshTimer(duration) {
 }
 
 let stateMap;
+let markers = [];
+let markersLayer = new L.LayerGroup(); // NOTE: Layer is created here!;
 
 let initializePage = () => {
     stateMap = initStateMap();
@@ -135,7 +146,7 @@ let initializePage = () => {
 }
 
 let refreshData = () => {
-	getTrucksAddToMap(stateMap);
+    getTrucksAddToMap(stateMap);
     createRefreshTimer(300);
 }
 
