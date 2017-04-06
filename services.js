@@ -14,7 +14,7 @@ window.onclick = function (event) {
     } else if (event.target == create_truck_modal) {
         create_truck_modal.style.display = "none";
     } else if (event.target == update_client_ids_modal) {
-        create_truck_modal.style.display = "none";
+        update_client_ids_modal.style.display = "none";
     } else if (event.target == update_local_client_id_modal) {
         update_local_client_id_modal.style.display = "none";
     }
