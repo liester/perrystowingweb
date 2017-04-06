@@ -18,7 +18,8 @@
         <label>Next Refresh:</label><label id="refresh_time">5m 00s</label>
         <label style="float: right"><a href="/perrystowingmap.html">Go To Map</a></label>
         <div>
-            <button style="float: left" type="button" class="btn btn-primary" onclick="openUpdateClientIdModal()">Update Clients</button>
+            <button style="float: left" type="button" class="btn btn-primary" onclick="openUpdateClientIdModal()">Manage Clients</button>
+            <!--<button id="local_client_id_btn"style="float:right" type="button" class="btn btn-primary" onclick="openUpdateLocalClientIdModal()">Update Client ID</button>-->
         </div>
         <div class="table_content">
             <div class="table_heading">
@@ -109,12 +110,33 @@
 
     <div id="update_client_ids_modal">
         <div class="modal-content">
-            <div id = "client_id_list">
+            <div id="client_id_list">
                 <!--dynamically added-->
             </div>
             <div class="assign_buttons">
                 <button type="button" class="btn btn-danger" onclick="closeModal('update_client_ids_modal')" style="width: 7em">Cancel</button>
-                <button id="assign_call_submit" type="button" class="btn btn-success" onclick="updateClientIds(this)" style="width: 7em"><i class="fa fa-check" aria-hidden="true">&nbsp;</i>Update</button>
+                <button id="assign_call_submit" type="button" class="btn btn-success" onclick="updateClientIds()" style="width: 7em"><i class="fa fa-check" aria-hidden="true">&nbsp;</i>Update</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="update_local_client_id_modal">
+        <div class="modal-content">
+
+            <div class="row">
+                <div class="col">
+                    <h4>Update Client Id</h4>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    Client ID:
+                    <input id="local_client_id" type="text" placeholder="None">
+                </div>
+            </div>
+            <div class="assign_buttons">
+                <button type="button" class="btn btn-danger" onclick="closeModal('update_local_client_id_modal')" style="width: 7em">Cancel</button>
+                <button id="assign_call_submit" type="button" class="btn btn-success" onclick="updateLocalClientId()" style="width: 7em"><i class="fa fa-check" aria-hidden="true">&nbsp;</i>Update</button>
             </div>
         </div>
     </div>
@@ -311,7 +333,8 @@
         </div>
     </div>
     <hr>
-    <h2><a href="https://perrystowingserver.herokuapp.com/calls/download">Download Completed Calls</a></h2>
+    <h2 style="float:left"><a href="https://perrystowingserver.herokuapp.com/calls/download">Download Completed Calls</a></h2>
+
 </body>
 
 </html>

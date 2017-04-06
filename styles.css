@@ -13,6 +13,10 @@ table thead {
     margin: auto;
 }
 
+#hidden {
+    visibility: hidden
+}
+
 /* Maps must have a height. I think it must be static as well */
 #stateMap { 
     height: 800px;
@@ -21,6 +25,19 @@ table thead {
 
 /* The Modal (background) */
 #assign_truck_modal {
+    display: none;
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+#update_local_client_id_modal {
     display: none;
     position: fixed; /* Stay in place */
     z-index: 1; /* Sit on top */

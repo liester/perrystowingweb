@@ -4,6 +4,7 @@ window.onclick = function (event) {
     let create_call_modal = document.getElementById('create_call_modal');
     let create_truck_modal = document.getElementById('create_truck_modal');
     let update_client_ids_modal = document.getElementById('update_client_ids_modal');
+    let update_local_client_id_modal = document.getElementById('update_local_client_id_modal');
     if (event.target == assign_truck_modal) {
         assign_truck_modal.style.display = "none";
     } else if (event.target == assign_call_modal) {
@@ -14,7 +15,47 @@ window.onclick = function (event) {
         create_truck_modal.style.display = "none";
     } else if (event.target == update_client_ids_modal) {
         create_truck_modal.style.display = "none";
+    } else if (event.target == update_local_client_id_modal) {
+        update_local_client_id_modal.style.display = "none";
     }
+}
+
+function checkForClientId() {
+    let localClientIdBtn = document.getElementById('local_client_id_btn');
+    if (!getCookie('clientId')) {
+        localClientIdBtn.classList.remove('btn-success');
+        localClientIdBtn.classList.add('btn-danger');
+    } else {
+        localClientIdBtn.classList.remove('btn-danger');
+        localClientIdBtn.classList.add('btn-success');
+    }
+};
+
+function getCookie(cname) {
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(';');
+    for(var i = 0; i <ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+}
+function deleteCookie(cname){
+    document.cookie = cname + "= ;";
+}
+
+function setCookie(cname, cvalue) {
+    document.cookie = cname + "=" + cvalue + ";";
+}
+
+function updateWindowClientId(inputElement) {
+    console.log(inputElement);
 }
 
 function closeModal(modalId) {
@@ -57,14 +98,6 @@ function assignCall(clicker) {
         refreshData();
         closeModal(assign_call_modal.id);
     });
-}
-
-function updateRow(tableId, rowId, data) {
-    let table_to_update = document.getElementById(tableId);
-    let row_to_update = table_to_update.querySelector('#' + rowId);
-
-    // table_to_update.replaceChild( , row_to_update);
-
 }
 
 function buildTruckTable() {
@@ -144,6 +177,23 @@ function openAssignCallModal(truckId) {
     });
 }
 
+
+function openUpdateLocalClientIdModal(truckId) {
+    let update_local_client_id_modal = document.getElementById('update_local_client_id_modal');
+    update_local_client_id_modal.style.display = "block";
+     
+    document.getElementById('local_client_id').value = getCookie("clientId");
+
+}
+
+function updateLocalClientId() {
+    let local_client_id = document.getElementById('local_client_id').value;
+    setCookie('clientId', local_client_id);
+    closeModal('update_local_client_id_modal');
+    checkForClientId();
+}
+
+
 function openUpdateClientIdModal() {
     makeRequest('GET', '/clients').then((clients) => {
         clients = JSON.parse(clients);
@@ -175,6 +225,7 @@ function openUpdateClientIdModal() {
         clients.forEach((client) => {
             let row = document.createElement('div');
             row.classList.add('row')
+            row.classList.add('client_id_row')
             let col1 = document.createElement('div');
             col1.classList.add('col-sm-1');
             col1.innerText = client.id;
@@ -191,6 +242,23 @@ function openUpdateClientIdModal() {
             row.appendChild(col3Input);
             client_id_list.appendChild(row);
         });
+    });
+}
+
+function updateClientIds(clicker) {
+    let clientIdRows = document.querySelectorAll('.client_id_row');
+    let clientIdList = [];
+    clientIdRows.forEach((clientIdRow) => {
+        let clientId = {};
+        clientId.clientId = clientIdRow.childNodes[1].value
+        clientId.role = clientIdRow.childNodes[2].value
+        clientIdList.push(clientId);
+    });
+    let truckId = document.getElementById('assign_call_submit').dataset.truckid;
+    let assign_call_modal = document.getElementById('assign_call_modal');
+    makeRequest('POST', "/clients/update", JSON.stringify(clientIdList)).then((call) => {
+        refreshData();
+        closeModal('update_client_ids_modal');
     });
 }
 
@@ -514,7 +582,6 @@ function makeRequest(method, url, data) {
         xhr.open(method, url);
         xhr.setRequestHeader("Content-Type", "application/json");
         xhr.withCredentials = true;
-        console.log(document.cookie);
         xhr.setRequestHeader('ClientCookies', document.cookie);
         xhr.onload = function () {
             if (this.status >= 200 && this.status < 300) {
@@ -564,12 +631,14 @@ let initializePage = () => {
     buildTruckTable();
     buildCallsTable();
     createRefreshTimer(300);
+    checkForClientId();
 }
 
 let refreshData = () => {
     buildTruckTable();
     buildCallsTable();
     createRefreshTimer(300);
+    checkForClientId();
 }
 
 initializePage();
