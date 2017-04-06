@@ -582,7 +582,6 @@ function makeRequest(method, url, data) {
         xhr.open(method, url);
         xhr.setRequestHeader("Content-Type", "application/json");
         xhr.withCredentials = true;
-        xhr.setRequestHeader('ClientCookies', document.cookie);
         xhr.onload = function () {
             if (this.status >= 200 && this.status < 300) {
                 resolve(xhr.response);
