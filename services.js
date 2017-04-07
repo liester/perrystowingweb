@@ -35,7 +35,7 @@ function getCookie(cname) {
     var name = cname + "=";
     var decodedCookie = decodeURIComponent(document.cookie);
     var ca = decodedCookie.split(';');
-    for(var i = 0; i <ca.length; i++) {
+    for (var i = 0; i < ca.length; i++) {
         var c = ca[i];
         while (c.charAt(0) == ' ') {
             c = c.substring(1);
@@ -46,7 +46,7 @@ function getCookie(cname) {
     }
     return "";
 }
-function deleteCookie(cname){
+function deleteCookie(cname) {
     document.cookie = cname + "= ;";
 }
 
@@ -181,7 +181,7 @@ function openAssignCallModal(truckId) {
 function openUpdateLocalClientIdModal(truckId) {
     let update_local_client_id_modal = document.getElementById('update_local_client_id_modal');
     update_local_client_id_modal.style.display = "block";
-     
+
     document.getElementById('local_client_id').value = getCookie("clientId");
 
 }
@@ -197,7 +197,7 @@ function updateLocalClientId() {
 function openUpdateClientIdModal() {
     makeRequest('GET', '/clients').then((clients) => {
         clients = JSON.parse(clients);
-        let client_id_list = document.querySelector("#client_id_list");
+        let client_id_list = document.getElementById("client_id_list");
         removeChildNodes(client_id_list);
         let update_client_ids_modal = document.getElementById('update_client_ids_modal');
         update_client_ids_modal.style.display = "block";
@@ -210,42 +210,98 @@ function openUpdateClientIdModal() {
         headerColumn1.innerText = "ID";
 
         let headerColumn2 = document.createElement('div');
-        headerColumn2.classList.add('col-sm-7');
+        headerColumn2.classList.add('col-sm-5');
         headerColumn2.innerText = "Client ID";
 
         let headerColumn3 = document.createElement('div');
         headerColumn3.classList.add('col-sm-2');
         headerColumn3.innerText = "Role";
+        let headerColumn4 = document.createElement('div');
+        headerColumn4.classList.add('col-sm-2');
+        headerColumn4.innerText = "Action";
         headers.appendChild(headerColumn1);
         headers.appendChild(headerColumn2);
         headers.appendChild(headerColumn3);
+        headers.appendChild(headerColumn4);
         client_id_list.appendChild(headers);
 
 
         clients.forEach((client) => {
             let row = document.createElement('div');
-            row.classList.add('row')
-            row.classList.add('client_id_row')
+            row.classList.add('row');
+            row.classList.add('client_id_row');
+            row.id = 'delete_client_id_' + client.id;
             let col1 = document.createElement('div');
             col1.classList.add('col-sm-1');
             col1.innerText = client.id;
             let col2Input = document.createElement('input');
-            col2Input.classList.add('col-sm-7');
+            col2Input.classList.add('col-sm-5');
             col2Input.maxLength = 16;
             col2Input.value = client.clientId;
             let col3Input = document.createElement('input');
             col3Input.classList.add('col-sm-2');
             col3Input.maxLength = 2;
             col3Input.value = client.role;
+            let col4Delete = document.createElement('button');
+            col4Delete.classList.add('col-sm-2');
+            col4Delete.classList.add('btn-danger');
+            col4Delete.classList.add('btn');
+            col4Delete.type = 'button';
+            col4Delete.innerText = 'Delete';
+            col4Delete.value = client.id;
+            col4Delete.onclick = deleteClientId;
             row.appendChild(col1);
             row.appendChild(col2Input);
             row.appendChild(col3Input);
+            row.appendChild(col4Delete);
             client_id_list.appendChild(row);
         });
     });
 }
 
-function updateClientIds(clicker) {
+function deleteClientId(element) {
+    let clientId = element.currentTarget.value;
+    makeRequest("GET", "/clients/delete/" + clientId).then(() => {
+        let client_id_to_delete = document.getElementById('delete_client_id_' + clientId);
+        if (client_id_to_delete.parentNode) {
+            client_id_to_delete.parentNode.removeChild(client_id_to_delete);
+        }
+    });
+}
+
+function createNewClientId() {
+    let client_id_list = document.getElementById("client_id_list");
+    let row = document.createElement('div');
+    row.classList.add('row');
+    row.classList.add('client_id_row');
+    row.id = 'delete_client_id_' + 0;
+    let col1 = document.createElement('div');
+    col1.classList.add('col-sm-1');
+    col1.innerText = "";
+    let col2Input = document.createElement('input');
+    col2Input.classList.add('col-sm-5');
+    col2Input.maxLength = 16;
+    col2Input.value = "";
+    let col3Input = document.createElement('input');
+    col3Input.classList.add('col-sm-2');
+    col3Input.maxLength = 2;
+    col3Input.value = "";
+    let col4Delete = document.createElement('button');
+    col4Delete.classList.add('col-sm-2');
+    col4Delete.classList.add('btn-danger');
+    col4Delete.classList.add('btn');
+    col4Delete.type = 'button';
+    col4Delete.innerText = 'Delete';
+    col4Delete.value = 0;
+    col4Delete.onclick = deleteClientId;
+    row.appendChild(col1);
+    row.appendChild(col2Input);
+    row.appendChild(col3Input);
+    row.appendChild(col4Delete);
+    client_id_list.appendChild(row);
+}
+
+function updateClientIds() {
     let clientIdRows = document.querySelectorAll('.client_id_row');
     let clientIdList = [];
     clientIdRows.forEach((clientIdRow) => {
@@ -582,6 +638,7 @@ function makeRequest(method, url, data) {
         xhr.open(method, url);
         xhr.setRequestHeader("Content-Type", "application/json");
         xhr.withCredentials = true;
+        xhr.setRequestHeader('Client-Id', getCookie('clientId'))
         xhr.onload = function () {
             if (this.status >= 200 && this.status < 300) {
                 resolve(xhr.response);

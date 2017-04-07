@@ -23,6 +23,10 @@ table thead {
     width: 85%;
 }
 
+.client_id_row {
+    margin-top: 2px;
+}
+
 /* The Modal (background) */
 #assign_truck_modal {
     display: none;
